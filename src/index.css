@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #14122b;
+  --color-ink-2: #1e1b3f;
+  --color-ink-3: #2a2656;
+  --color-lime: #c6ff4d;
+  --color-pink: #ff6fb5;
+  --color-sky: #6fd3ff;
+  --color-sun: #ffc94d;
+  --font-display: "Bricolage Grotesque", system-ui, sans-serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+html,
+body {
+  background: var(--color-ink);
+  color: white;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+
+body {
+  min-height: 100dvh;
+  /* starfield */
+  background-image:
+    radial-gradient(1px 1px at 20% 30%, #ffffff55 50%, transparent 51%),
+    radial-gradient(1px 1px at 70% 15%, #ffffff40 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 85% 60%, #ffffff35 50%, transparent 51%),
+    radial-gradient(1px 1px at 35% 80%, #ffffff40 50%, transparent 51%),
+    radial-gradient(1px 1px at 55% 50%, #ffffff30 50%, transparent 51%),
+    radial-gradient(120% 60% at 50% 0%, #2a2656 0%, transparent 70%);
+  background-size: 220px 220px, 260px 260px, 300px 300px, 240px 240px, 180px 180px, 100% 100%;
+  background-attachment: fixed;
+}
+
+button { cursor: pointer; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+
+/* Press feedback on every pressable (Emil: 0.97, fast ease-out) */
+.press { transition: transform 160ms var(--ease-out), opacity 160ms var(--ease-out); }
+.press:active { transform: scale(0.97); }
+.press:disabled { opacity: 0.4; transform: none; }
+
+.font-display { font-variation-settings: "opsz" 96; letter-spacing: -0.02em; }
+
+/* Rarity starburst behind sticker art */
+.burst {
+  clip-path: polygon(50% 0%, 61% 30%, 95% 25%, 70% 50%, 95% 75%, 61% 70%, 50% 100%, 39% 70%, 5% 75%, 30% 50%, 5% 25%, 39% 30%);
+  animation: spin 40s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Idle personalities */
+.idle-bounce { animation: idle-bounce 1.6s var(--ease-out) infinite; transform-origin: 50% 100%; }
+.idle-sway { animation: idle-sway 3s ease-in-out infinite; transform-origin: 50% 100%; }
+.idle-float { animation: idle-float 3.2s ease-in-out infinite; }
+.idle-jitter { animation: idle-jitter 0.5s steps(2) infinite; }
+.idle-breathe { animation: idle-breathe 3.6s ease-in-out infinite; transform-origin: 50% 100%; }
+.idle-wobble { animation: idle-wobble 2.2s ease-in-out infinite; transform-origin: 50% 100%; }
+
+@keyframes idle-bounce { 0%, 100% { transform: translateY(0) scale(1, 1); } 15% { transform: translateY(0) scale(1.06, 0.94); } 45% { transform: translateY(-10px) scale(0.97, 1.03); } }
+@keyframes idle-sway { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
+@keyframes idle-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes idle-jitter { 0% { transform: translate(-1px, 0) rotate(-1deg); } 100% { transform: translate(1px, -1px) rotate(1deg); } }
+@keyframes idle-breathe { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.03, 0.97); } }
+@keyframes idle-wobble { 0%, 100% { transform: rotate(0) skewX(0); } 25% { transform: rotate(-5deg) skewX(3deg); } 75% { transform: rotate(4deg) skewX(-2deg); } }
+
+/* Confetti */
+.confetti { position: absolute; width: 8px; height: 12px; border-radius: 2px; animation: confetti 1.4s var(--ease-out) forwards; }
+@keyframes confetti {
+  from { transform: translate(0, 0) rotate(0); opacity: 1; }
+  to { transform: translate(var(--x), var(--y)) rotate(var(--r)); opacity: 0; }
+}
+
+/* Range slider */
+input[type="range"].slider { appearance: none; height: 10px; border-radius: 999px; background: linear-gradient(90deg, var(--color-lime) var(--p), #ffffff1f var(--p)); }
+input[type="range"].slider::-webkit-slider-thumb { appearance: none; width: 30px; height: 30px; border-radius: 50%; background: white; box-shadow: 0 0 0 6px #c6ff4d55, 0 4px 12px #0008; }
+input[type="range"].slider::-moz-range-thumb { width: 30px; height: 30px; border: 0; border-radius: 50%; background: white; box-shadow: 0 0 0 6px #c6ff4d55; }
+input[type="range"].slider:focus-visible { outline: 2px solid var(--color-lime); outline-offset: 6px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .burst, [class*="idle-"], .confetti { animation: none !important; }
+}
