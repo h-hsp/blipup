@@ -22,19 +22,64 @@ body {
   overscroll-behavior: none;
 }
 
-body {
-  min-height: 100dvh;
-  /* starfield */
+body { min-height: 100dvh; background: transparent; }
+
+/* Galaxy sky behind every screen: stars + nebula clouds, a twinkle layer and the odd shooting star. */
+.sky {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
   background-image:
-    radial-gradient(1px 1px at 20% 30%, #ffffff55 50%, transparent 51%),
-    radial-gradient(1px 1px at 70% 15%, #ffffff40 50%, transparent 51%),
-    radial-gradient(1.5px 1.5px at 85% 60%, #ffffff35 50%, transparent 51%),
-    radial-gradient(1px 1px at 35% 80%, #ffffff40 50%, transparent 51%),
-    radial-gradient(1px 1px at 55% 50%, #ffffff30 50%, transparent 51%),
-    radial-gradient(120% 60% at 50% 0%, #2a2656 0%, transparent 70%);
-  background-size: 220px 220px, 260px 260px, 300px 300px, 240px 240px, 180px 180px, 100% 100%;
-  background-attachment: fixed;
+    radial-gradient(1px 1px at 20% 30%, #ffffff99 50%, transparent 51%),
+    radial-gradient(1px 1px at 70% 15%, #ffffff80 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 85% 60%, #ffffff70 50%, transparent 51%),
+    radial-gradient(1px 1px at 35% 80%, #ffffff80 50%, transparent 51%),
+    radial-gradient(1px 1px at 55% 50%, #ffffff60 50%, transparent 51%),
+    radial-gradient(55% 35% at 12% 18%, #7b3fe455 0%, transparent 70%),
+    radial-gradient(45% 30% at 90% 40%, #ff6fb530 0%, transparent 70%),
+    radial-gradient(70% 40% at 40% 100%, #2bb7d42e 0%, transparent 70%),
+    linear-gradient(180deg, #0b0a1f 0%, #14122b 45%, #1c1145 100%);
+  background-size: 220px 220px, 260px 260px, 300px 300px, 240px 240px, 180px 180px, 100% 100%, 100% 100%, 100% 100%, 100% 100%;
 }
+.sky::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1.5px 1.5px at 10% 20%, #fff 50%, transparent 51%),
+    radial-gradient(2px 2px at 60% 70%, #d9ccff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 85% 10%, #fff 50%, transparent 51%);
+  background-size: 340px 340px, 420px 420px, 380px 380px;
+  animation: twinkle 4s ease-in-out infinite alternate;
+}
+@keyframes twinkle { from { opacity: 0.25; } to { opacity: 1; } }
+
+.sky i {
+  position: absolute;
+  width: 150px;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #fff, #ffffff00);
+  transform-origin: 0 50%;
+  opacity: 0;
+  animation: shoot 11s linear infinite;
+}
+.sky i::before { content: ""; position: absolute; left: -2px; top: -2px; width: 6px; height: 6px; border-radius: 50%; background: #fff; box-shadow: 0 0 12px 3px #ffffffaa; }
+.sky i:nth-child(1) { top: 10%; left: 80%; animation-delay: 1.5s; }
+.sky i:nth-child(2) { top: 32%; left: 105%; animation-duration: 13s; animation-delay: 6s; }
+.sky i:nth-child(3) { top: 4%; left: 50%; animation-duration: 17s; animation-delay: 10s; }
+/* head leads down-left; visible for ~7% of the cycle, then the sky rests */
+@keyframes shoot {
+  0% { opacity: 0; transform: rotate(-32deg) translateX(0); }
+  1% { opacity: 1; }
+  7%, 100% { opacity: 0; transform: rotate(-32deg) translateX(-520px); }
+}
+
+/* Streak flame */
+.flame { display: inline-block; transform-origin: 50% 90%; filter: drop-shadow(0 0 18px #ff7a2fa0); animation: flame 1.8s ease-in-out infinite; }
+@keyframes flame { 0%, 100% { transform: scale(1) rotate(-3deg); } 50% { transform: scale(1.08, 1.14) rotate(3deg); } }
 
 button { cursor: pointer; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
 
@@ -81,5 +126,6 @@ input[type="range"].slider::-moz-range-thumb { width: 30px; height: 30px; border
 input[type="range"].slider:focus-visible { outline: 2px solid var(--color-lime); outline-offset: 6px; }
 
 @media (prefers-reduced-motion: reduce) {
-  .burst, [class*="idle-"], .confetti { animation: none !important; }
+  .burst, [class*="idle-"], .confetti, .flame, .sky::before { animation: none !important; }
+  .sky i { display: none; }
 }

@@ -12,7 +12,7 @@ type Tab = 'home' | 'dex' | 'me' | 'settings'
 type View = { name: Tab } | { name: 'session' } | { name: 'encounter'; enc: Enc; rewards: string[] }
 
 export default function App() {
-  return <StoreProvider><Shell /></StoreProvider>
+  return <StoreProvider><div className="sky" aria-hidden><i /><i /><i /></div><Shell /></StoreProvider>
 }
 
 function Shell() {

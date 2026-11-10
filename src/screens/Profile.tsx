@@ -1,15 +1,19 @@
 import { useState } from 'react'
 import { BLIPS, blipById } from '../game/blips'
 import { ACHIEVEMENTS } from '../game/achievements'
+import { levelInfo, liveStreak, totalXp } from '../game/progress'
 import { BlipArt, Button, Stat } from '../components/ui'
 import { useStore } from '../lib/store'
 import { pref, setPref } from '../lib/fx'
-import { supabase } from '../lib/supabase'
+import { localDate, supabase } from '../lib/supabase'
 
 export function Profile({ onSettings }: { onSettings: () => void }) {
   const { user, profile, caught } = useStore()
   const caughtSet = new Set(caught.map((c) => c.blip_id))
   const avatar = blipById(caught[0]?.blip_id ?? 'blub')
+  const { streak } = liveStreak(profile, localDate(), localDate(new Date(Date.now() - 864e5)))
+  const xp = profile ? totalXp(profile, caught) : 0
+  const { level } = levelInfo(xp)
 
   return (
     <div className="space-y-6">
@@ -29,7 +33,9 @@ export function Profile({ onSettings }: { onSettings: () => void }) {
         <Stat label="Sessions" value={profile?.total_sessions ?? 0} />
         <Stat label="Blips collected" value={`${caught.length}/${BLIPS.length}`} />
         <Stat label="Double Bubbles" value={`🫧 ${profile?.double_bubbles ?? 0}`} />
-        <Stat label="Current streak" value={`🔥 ${profile?.streak ?? 0}`} />
+        <Stat label="Level" value={`Lv ${level}`} />
+        <Stat label="Total XP" value={xp.toLocaleString()} />
+        <Stat label="Current streak" value={`🔥 ${streak}`} />
         <Stat label="Best streak" value={profile?.best_streak ?? 0} />
         <Stat label="Best session" value={profile?.best_session ?? 0} />
       </div>

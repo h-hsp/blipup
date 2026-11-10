@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { blipById, RARITY } from '../game/blips'
 import { rewardText } from '../game/achievements'
+import { CATCH_XP } from '../game/progress'
 import { BlipArt, Button } from '../components/ui'
 import { useStore } from '../lib/store'
 import { beep, buzz } from '../lib/fx'
@@ -183,7 +184,7 @@ export function Encounter({ initial, rewards, onDone }: { initial: Enc; rewards:
         {phase === 'caught' && (
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7, duration: 0.3, ease: OUT }} className="text-center">
             <p className="font-display text-2xl font-extrabold">“{blip.catchLine}”</p>
-            <p className="mt-1 text-sm text-white/55">{isNew ? 'Added to your Blipdex!' : `Caught ×${timesCaught}`}</p>
+            <p className="mt-1 text-sm text-white/55">{isNew ? 'Added to your Blipdex!' : `Caught ×${timesCaught}`} · <span className="font-bold text-lime">+{CATCH_XP[blip.rarity]} XP</span></p>
             <Button className="mt-4 w-full" onClick={onDone}>Nice!</Button>
           </motion.div>
         )}
