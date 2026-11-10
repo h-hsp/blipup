@@ -26,6 +26,27 @@ export function levelInfo(xp: number) {
   return { level, into: xp - base, need: next - base, toNext: next - xp }
 }
 
+/** Ranks come from lifetime pushups only (levels mix in catches and streaks). `min` = total pushups needed. */
+export const RANKS = [
+  { name: 'Rookie', min: 0, icon: '🐣', color: '#c9c6e8' },
+  { name: 'Bronze', min: 50, icon: '🥉', color: '#d08a4f' },
+  { name: 'Silver', min: 150, icon: '🥈', color: '#c9d3e6' },
+  { name: 'Gold', min: 350, icon: '🥇', color: '#ffc94d' },
+  { name: 'Platinum', min: 700, icon: '💠', color: '#6fd3ff' },
+  { name: 'Diamond', min: 1200, icon: '💎', color: '#8fe9ff' },
+  { name: 'Master', min: 2000, icon: '🔮', color: '#b48cff' },
+  { name: 'Grandmaster', min: 3500, icon: '👑', color: '#ff8a4d' },
+  { name: 'Legend', min: 5000, icon: '🌟', color: '#ff6fb5' },
+  { name: 'Mythic', min: 10000, icon: '🌌', color: '#c6ff4d' },
+]
+
+export function rankInfo(reps: number) {
+  const i = RANKS.filter((r) => reps >= r.min).length - 1
+  const rank = RANKS[i]
+  const next = RANKS[i + 1] as (typeof RANKS)[number] | undefined
+  return { i, rank, next, toNext: next ? next.min - reps : 0, pct: next ? (reps - rank.min) / (next.min - rank.min) : 1 }
+}
+
 /** The streak shown to the player: it only counts if the last session was today or yesterday (local days). */
 export function liveStreak(p: Stats | null, today: string, yesterday: string) {
   const doneToday = p?.last_session_date === today

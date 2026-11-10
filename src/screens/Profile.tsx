@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { BLIPS, blipById } from '../game/blips'
 import { ACHIEVEMENTS } from '../game/achievements'
 import { LEVELS } from '../game/campaign'
-import { levelInfo, liveStreak, totalXp } from '../game/progress'
+import { levelInfo, liveStreak, rankInfo, RANKS, totalXp } from '../game/progress'
 import { BlipArt, Button, Stat } from '../components/ui'
 import { useStore } from '../lib/store'
 import { pref, setPref } from '../lib/fx'
@@ -26,6 +26,8 @@ export function Profile({ onSettings }: { onSettings: () => void }) {
         </div>
         <button onClick={onSettings} aria-label="Settings" className="press grid h-11 w-11 place-items-center rounded-2xl bg-ink-3 text-xl shadow-[0_3px_0_var(--color-edge)]">⚙︎</button>
       </header>
+
+      <RankCard reps={profile?.total_reps ?? 0} />
 
       {user?.is_anonymous && <SaveProgress />}
 
@@ -58,6 +60,33 @@ export function Profile({ onSettings }: { onSettings: () => void }) {
         </ul>
       </section>
     </div>
+  )
+}
+
+function RankCard({ reps }: { reps: number }) {
+  const { i, rank, next, toNext, pct } = rankInfo(reps)
+  return (
+    <section aria-label={`Rank: ${rank.name}`} className="card card-glow p-5" style={{ ['--glow' as string]: rank.color }}>
+      <div className="flex items-center gap-4">
+        <div className="grid h-16 w-16 shrink-0 place-items-center rounded-2xl bg-ink-3 text-4xl shadow-[inset_0_1.5px_0_#ffffff26,0_3px_0_var(--color-edge)]" aria-hidden>{rank.icon}</div>
+        <div className="min-w-0 flex-1">
+          <div className="label">Pushup rank</div>
+          <div className="font-display text-3xl font-extrabold leading-tight" style={{ color: rank.color }}>{rank.name}</div>
+          <div className="text-sm text-white/55">{reps.toLocaleString()} pushups total</div>
+        </div>
+      </div>
+      <div className="mt-4 h-3 overflow-hidden rounded-full bg-[#0d0b26] ring-1 ring-white/10" role="progressbar" aria-label={next ? `Progress to ${next.name}` : 'Top rank'}
+        aria-valuenow={Math.round(pct * 100)} aria-valuemin={0} aria-valuemax={100}>
+        <div className="h-full rounded-full transition-[width] duration-500" style={{ width: `${pct * 100}%`, background: rank.color }} />
+      </div>
+      <div className="mt-1.5 text-xs text-white/45">{next ? `${toNext.toLocaleString()} pushups to ${next.icon} ${next.name}` : 'Top rank. Absolute unit.'}</div>
+      <ol className="mt-4 flex justify-between" aria-label="All ranks">
+        {RANKS.map((r, k) => (
+          <li key={r.name} title={`${r.name} · ${r.min.toLocaleString()} pushups`} aria-label={`${r.name}, ${r.min} pushups${k <= i ? ', reached' : ''}`}
+            className={`grid h-7 w-7 place-items-center rounded-lg text-base ${k === i ? 'bg-white/15 ring-2 ring-white/60' : ''} ${k > i ? 'opacity-30 grayscale' : ''}`}>{r.icon}</li>
+        ))}
+      </ol>
+    </section>
   )
 }
 
