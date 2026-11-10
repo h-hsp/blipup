@@ -3,6 +3,8 @@ import { MotionConfig, motion } from 'motion/react'
 import { StoreProvider, useStore } from './lib/store'
 import type { Encounter as Enc } from './lib/supabase'
 import type { Level } from './game/campaign'
+import { levelInfo, liveStreak, totalXp } from './game/progress'
+import { localDate } from './lib/supabase'
 import { Onboarding } from './screens/Onboarding'
 import { Home } from './screens/Home'
 import { Campaign } from './screens/Campaign'
@@ -41,7 +43,8 @@ function Shell() {
 
   const tab = view.name
   return (
-    <div className="mx-auto min-h-dvh max-w-md px-5 pb-32 pt-[max(1.25rem,env(safe-area-inset-top))]">
+    <div className={`mx-auto min-h-dvh max-w-md px-5 pb-32 ${tab === 'settings' ? 'pt-[max(1.25rem,env(safe-area-inset-top))]' : ''}`}>
+      {tab !== 'settings' && <TopBar bubbles={tab === 'home'} />}
       {tab === 'home' && <Home onStart={() => setView({ name: 'session' })} />}
       {tab === 'campaign' && <Campaign onStart={(level) => setView({ name: 'session', level })} />}
       {tab === 'dex' && <Dex />}
@@ -63,6 +66,24 @@ function Shell() {
         </div>
       </nav>
     </div>
+  )
+}
+
+/** Always on the main tabs: logo left; bubbles (Home only), streak and level top right. Sticks while scrolling. */
+function TopBar({ bubbles }: { bubbles: boolean }) {
+  const { profile, caught } = useStore()
+  const { streak } = liveStreak(profile, localDate(), localDate(new Date(Date.now() - 864e5)))
+  const { level } = levelInfo(profile ? totalXp(profile, caught) : 0)
+  const chip = 'rounded-xl px-3 py-1.5 font-display text-sm font-extrabold tabular-nums'
+  return (
+    <header className="sticky top-0 z-20 -mx-5 mb-5 flex items-center justify-between bg-ink/75 px-5 pb-3 pt-[max(1.25rem,env(safe-area-inset-top))] backdrop-blur-md">
+      <span className="font-display text-2xl font-extrabold">Blip<span className="text-lime">Up</span></span>
+      <div className="flex gap-2">
+        {bubbles && <span className={`${chip} bg-ink-3 shadow-[0_3px_0_var(--color-edge)]`} aria-label={`${profile?.double_bubbles ?? 0} Double Bubbles`}>🫧 {profile?.double_bubbles ?? 0}</span>}
+        <span className={`${chip} ${streak ? 'bg-sun text-ink shadow-[0_3px_0_#b8862a]' : 'bg-ink-3 text-white/60 shadow-[0_3px_0_var(--color-edge)]'}`} aria-label={`${streak} day streak`}>🔥 {streak}</span>
+        <span className={`${chip} bg-lime text-ink shadow-[0_3px_0_#7fb01a]`} aria-label={`Level ${level}`}>Lv {level}</span>
+      </div>
+    </header>
   )
 }
 

@@ -34,14 +34,6 @@ export function Home({ onStart }: { onStart: () => void }) {
 
   return (
     <div className="space-y-5">
-      <header className="flex items-center justify-between">
-        <span className="font-display text-2xl font-extrabold">Blip<span className="text-lime">Up</span></span>
-        <div className="flex gap-2">
-          <span className="rounded-xl bg-lime px-3 py-1.5 font-display text-sm font-extrabold text-ink shadow-[0_3px_0_#7fb01a]" aria-label={`Level ${lvl.level}`}>Lv {lvl.level}</span>
-          <span className="rounded-xl bg-ink-3 px-3 py-1.5 font-display text-sm font-extrabold shadow-[0_3px_0_var(--color-edge)]" aria-label={`${profile?.double_bubbles ?? 0} Double Bubbles`}>🫧 {profile?.double_bubbles ?? 0}</span>
-        </div>
-      </header>
-
       <AnimatePresence>
         {celebrate && (
           <motion.button key="celebrate" onClick={dismiss} aria-live="polite"
