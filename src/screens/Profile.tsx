@@ -5,7 +5,7 @@ import { levelInfo, liveStreak, totalXp } from '../game/progress'
 import { BlipArt, Button, Stat } from '../components/ui'
 import { useStore } from '../lib/store'
 import { pref, setPref } from '../lib/fx'
-import { localDate, supabase } from '../lib/supabase'
+import { localDate, rpc, supabase, type Encounter } from '../lib/supabase'
 
 export function Profile({ onSettings }: { onSettings: () => void }) {
   const { user, profile, caught } = useStore()
@@ -84,7 +84,7 @@ function SaveProgress() {
   )
 }
 
-export function Settings({ onBack }: { onBack: () => void }) {
+export function Settings({ onBack, onEncounter }: { onBack: () => void; onEncounter: (e: Encounter) => void }) {
   const { user, profile, refresh } = useStore()
   const [name, setName] = useState(profile?.username ?? '')
   const [saved, setSaved] = useState('')
@@ -93,8 +93,14 @@ export function Settings({ onBack }: { onBack: () => void }) {
   async function saveName(e: React.FormEvent) {
     e.preventDefault()
     if (!user) return
-    const { error } = await supabase.from('profiles').update({ username: name.trim() }).eq('id', user.id)
-    setSaved(error ? error.message : 'Saved ✓')
+    // The server decides: a normal rename, or (owner code) owner mode without renaming.
+    try {
+      const r = await rpc<{ owner: boolean }>('set_username', { p_name: name })
+      if (r.owner) setName(profile?.username ?? '')
+      setSaved(r.owner ? '👑 Owner mode on. Every Blip unlocked.' : 'Saved ✓')
+    } catch (err) {
+      setSaved((err as Error).message)
+    }
     refresh()
   }
 
@@ -148,8 +154,48 @@ export function Settings({ onBack }: { onBack: () => void }) {
         })}
       </ul>
 
+      {profile?.is_owner && <OwnerPanel onEncounter={onEncounter} />}
+
       <Button variant="ghost" className="w-full" onClick={signOut}>Sign out</Button>
       <p className="text-center text-xs text-white/30">BlipUp v0.1 · Every rep sends a blip.</p>
     </div>
+  )
+}
+
+/** Owner-only test tools. Every action is re-checked on the server (owner_action). */
+function OwnerPanel({ onEncounter }: { onEncounter: (e: Encounter) => void }) {
+  const { refresh } = useStore()
+  const [msg, setMsg] = useState('')
+  const [blip, setBlip] = useState(BLIPS[0].id)
+
+  async function run(action: string, done: string) {
+    if (action === 'reset' && !confirm('Reset all your Blips and stats? Owner mode stays on.')) return
+    try {
+      const r = await rpc<Encounter>('owner_action', { p_action: action, p_blip: action === 'spawn' ? blip : null })
+      if (action === 'spawn') return onEncounter(r)
+      setMsg(`${done} ✓`)
+      refresh()
+    } catch (e) {
+      setMsg((e as Error).message)
+    }
+  }
+
+  return (
+    <section className="rounded-[28px] bg-gradient-to-br from-sun/20 to-pink/10 p-5 ring-1 ring-sun/40">
+      <h2 className="font-display text-lg font-extrabold">👑 Owner mode</h2>
+      <div className="mt-3 grid grid-cols-2 gap-2">
+        {([['unlock_all', 'Unlock all Blips'], ['bubbles', '+10 Double Bubbles'], ['reps', '+100 reps (XP)'], ['reset', 'Reset progress']] as const).map(([a, label]) => (
+          <button key={a} onClick={() => run(a, label)} className="press rounded-2xl bg-white/10 px-3 py-3 text-sm font-bold">{label}</button>
+        ))}
+      </div>
+      <div className="mt-3 flex gap-2">
+        <label htmlFor="spawn" className="sr-only">Blip to spawn</label>
+        <select id="spawn" value={blip} onChange={(e) => setBlip(e.target.value)} className="min-w-0 flex-1 rounded-full bg-black/30 px-4 py-3 text-base ring-1 ring-white/15">
+          {BLIPS.map((b) => <option key={b.id} value={b.id}>{'★'.repeat(b.rarity)} {b.name}</option>)}
+        </select>
+        <button onClick={() => run('spawn', '')} className="press rounded-full bg-sun px-5 font-bold text-ink">Spawn</button>
+      </div>
+      {msg && <p role="status" className="mt-2 text-sm text-white/70">{msg}</p>}
+    </section>
   )
 }

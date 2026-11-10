@@ -16,6 +16,7 @@ export interface Profile {
   best_session: number
   last_session_date: string | null
   daily_claimed_date: string | null
+  is_owner: boolean
 }
 
 export interface Encounter {

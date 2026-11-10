@@ -35,7 +35,7 @@ function Shell() {
       {tab === 'home' && <Home onStart={() => setView({ name: 'session' })} />}
       {tab === 'dex' && <Dex />}
       {tab === 'me' && <Profile onSettings={() => setView({ name: 'settings' })} />}
-      {tab === 'settings' && <Settings onBack={() => setView({ name: 'me' })} />}
+      {tab === 'settings' && <Settings onBack={() => setView({ name: 'me' })} onEncounter={(enc) => setView({ name: 'encounter', enc, rewards: [] })} />}
 
       <nav className="fixed inset-x-0 bottom-0 z-30 mx-auto max-w-md px-5 pb-[max(1rem,env(safe-area-inset-bottom))]">
         <div className="flex rounded-full bg-ink-2/90 p-1.5 ring-1 ring-white/10 backdrop-blur-xl">
