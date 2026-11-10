@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { BLIPS, blipById } from '../game/blips'
 import { DAILY_TARGET } from '../game/catch'
-import { levelInfo, liveStreak, nextStreakReward, totalXp, XP_PER_REP } from '../game/progress'
+import { levelInfo, liveStreak, nextStreakReward, rankInfo, totalXp } from '../game/progress'
 import { BlipArt, Button, Stars, Stat } from '../components/ui'
 import { useStore } from '../lib/store'
 import { beep, buzz } from '../lib/fx'
@@ -51,10 +51,14 @@ export function Home({ onStart }: { onStart: () => void }) {
         <p className="mt-1 text-white/60">{hype}</p>
       </div>
 
-      <StreakHero streak={streak} doneToday={doneToday} best={profile?.best_streak ?? 0} pop={!!celebrate} />
+      <div className="grid grid-cols-2 gap-3">
+        <StreakHero streak={streak} doneToday={doneToday} best={profile?.best_streak ?? 0} pop={!!celebrate} />
+        <div className="grid gap-3">
+          <RankMini reps={profile?.total_reps ?? 0} />
+          <LevelMini {...lvl} />
+        </div>
+      </div>
       <Button className="w-full py-5 text-xl" onClick={onStart}>{doneToday || streak === 0 ? 'Start pushups ✨' : `Save your ${streak}-day streak 🔥`}</Button>
-
-      <LevelBar {...lvl} />
 
       <section className={`card flex items-center gap-4 p-5 ${featured ? 'card-glow' : ''}`} style={{ ['--glow' as string]: featured?.color }}>
         <BlipArt blip={featured ?? mystery} size={128} locked={!featured} burst={!featured} />
@@ -93,56 +97,67 @@ function StreakHero({ streak, doneToday, best, pop }: { streak: number; doneToda
     label: new Date(Date.now() - ago * DAY).toLocaleDateString('en-AU', { weekday: 'narrow' }),
     lit: alive && ago >= end && ago < end + streak,
   }))
-  const status = doneToday
-    ? 'Locked in for today. See you tomorrow.'
-    : alive
-      ? `Do a session in the next ${24 - new Date().getHours()}h or it resets!`
-      : 'Do a session today to start a streak.'
+  const status = doneToday ? 'Locked in today ✓' : alive ? `${24 - new Date().getHours()}h left or it resets!` : 'Start one today'
 
   return (
-    <section aria-label={`${streak} day streak`}
-      className={`relative p-5 ${alive ? 'rounded-[28px] bg-[linear-gradient(135deg,#ffb52e,#ff7a3d_55%,#ff5d8f)] text-ink shadow-[inset_0_1.5px_0_#ffffff80,0_5px_0_#b8431f]' : 'card'}`}>
-      <div className="relative flex items-center gap-4">
-        <span className={`text-6xl ${alive ? 'flame' : 'opacity-40 grayscale'}`} aria-hidden>🔥</span>
-        <div className="flex-1">
-          <motion.div key={streak} initial={pop ? { scale: 1.5 } : false} animate={{ scale: 1 }} transition={{ type: 'spring', duration: 0.6, bounce: 0.5 }}
-            className="origin-left font-display text-6xl font-extrabold leading-none tabular-nums">{streak}</motion.div>
-          <div className="font-display text-lg font-extrabold">day streak</div>
-        </div>
-        <div className={`text-right text-xs font-bold ${alive ? 'text-ink/70' : 'text-white/55'}`}>Best<div className={`font-display text-xl font-extrabold ${alive ? 'text-ink' : 'text-white'}`}>{best}</div></div>
+    <section aria-label={`${streak} day streak, best ${best}`}
+      className={`relative flex flex-col p-4 ${alive ? 'rounded-[28px] bg-[linear-gradient(160deg,#ffb52e,#ff7a3d_55%,#ff5d8f)] text-ink shadow-[inset_0_1.5px_0_#ffffff80,0_5px_0_#b8431f]' : 'card'}`}>
+      <div className="flex items-start justify-between">
+        <span className={`text-4xl ${alive ? 'flame' : 'opacity-40 grayscale'}`} aria-hidden>🔥</span>
+        <div className={`text-right text-[11px] font-bold ${alive ? 'text-ink/70' : 'text-white/55'}`}>Best<div className={`font-display text-lg font-extrabold leading-none ${alive ? 'text-ink' : 'text-white'}`}>{best}</div></div>
       </div>
+      <motion.div key={streak} initial={pop ? { scale: 1.5 } : false} animate={{ scale: 1 }} transition={{ type: 'spring', duration: 0.6, bounce: 0.5 }}
+        className="mt-1 origin-left font-display text-6xl font-extrabold leading-none tabular-nums">{streak}</motion.div>
+      <div className="font-display text-base font-extrabold">day streak</div>
 
-      <ol className="relative mt-4 flex justify-between">
+      <ol className="mt-3 flex justify-between" aria-label="Last 7 days">
         {days.map((d) => (
-          <li key={d.ago} className={`flex flex-col items-center gap-1 text-[11px] font-extrabold ${alive ? 'text-ink/70' : 'text-white/50'}`}>
-            <span className={`grid h-9 w-9 place-items-center rounded-xl text-base ${d.lit ? 'bg-ink shadow-[0_3px_0_#0006]' : alive ? 'bg-ink/15' : 'bg-white/8'} ${d.ago === 0 ? (alive ? 'ring-2 ring-ink' : 'ring-2 ring-white/70') : ''}`}>
-              {d.lit ? '🔥' : ''}
-            </span>
+          <li key={d.ago} className={`flex flex-col items-center gap-0.5 text-[9px] font-extrabold ${alive ? 'text-ink/70' : 'text-white/50'}`}>
+            <span className={`h-3.5 w-3.5 rounded-[5px] ${d.lit ? 'bg-ink' : alive ? 'bg-ink/15' : 'bg-white/10'} ${d.ago === 0 ? (alive ? 'ring-2 ring-ink/80' : 'ring-2 ring-white/60') : ''}`} />
             {d.label}
           </li>
         ))}
       </ol>
 
-      <p className={`relative mt-4 text-sm font-bold ${alive && !doneToday ? 'inline-block rounded-xl bg-ink px-3 py-1.5 text-sun' : alive ? 'text-ink/80' : 'text-white/70'}`}>{status}</p>
-      <p className={`relative mt-1 text-xs font-semibold ${alive ? 'text-ink/70' : 'text-white/50'}`}>🫧 +1 Double Bubble at day {next} · {next - streak} to go</p>
+      <div className="flex-1" />
+      <p className={`mt-3 text-xs font-extrabold ${alive && !doneToday ? 'self-start rounded-lg bg-ink px-2 py-1 text-sun' : alive ? 'text-ink/80' : 'text-white/70'}`}>{status}</p>
+      <p className={`mt-1 text-[11px] font-semibold ${alive ? 'text-ink/70' : 'text-white/50'}`}>🫧 +1 at day {next}</p>
     </section>
   )
 }
 
-function LevelBar({ level, into, need, toNext }: { level: number; into: number; need: number; toNext: number }) {
+const MINI = 'card flex flex-col justify-center p-3.5'
+const miniBar = (pct: number, fill: string, label: string) => (
+  <div className="mt-2 h-2 overflow-hidden rounded-full bg-[#0d0b26] ring-1 ring-white/10" role="progressbar" aria-label={label} aria-valuenow={Math.round(pct * 100)} aria-valuemin={0} aria-valuemax={100}>
+    <div className="h-full origin-left rounded-full" style={{ transform: `scaleX(${pct})`, transition: 'transform 600ms var(--ease-out)', background: fill }} />
+  </div>
+)
+
+function RankMini({ reps }: { reps: number }) {
+  const { rank, next, toNext, pct } = rankInfo(reps)
   return (
-    <section className="card flex items-center gap-4 p-4">
-      <div className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-lime font-display text-2xl font-extrabold text-ink shadow-[inset_0_1.5px_0_#ffffff80,0_4px_0_#7fb01a]">{level}</div>
-      <div className="min-w-0 flex-1">
-        <div className="flex items-baseline justify-between gap-2">
-          <span className="font-display text-lg font-extrabold">Level {level}</span>
-          <span className="text-xs tabular-nums text-white/55">{into.toLocaleString()} / {need.toLocaleString()} XP</span>
-        </div>
-        <div className="mt-2 h-3.5 overflow-hidden rounded-full bg-[#0d0b26] ring-1 ring-white/10">
-          <div className="h-full origin-left rounded-full bg-gradient-to-r from-lime to-sky" style={{ transform: `scaleX(${into / need})`, transition: 'transform 600ms var(--ease-out)' }} />
-        </div>
-        <div className="mt-1.5 text-xs text-white/45">{toNext.toLocaleString()} XP to Level {level + 1} · {XP_PER_REP} XP per pushup</div>
+    <section aria-label={`Rank: ${rank.name}`} className={MINI}>
+      <div className="label">Rank</div>
+      <div className="flex items-center gap-1.5">
+        <span className="text-2xl" aria-hidden>{rank.icon}</span>
+        <span className="truncate font-display text-lg font-extrabold" style={{ color: rank.color }}>{rank.name}</span>
       </div>
+      {miniBar(pct, rank.color, next ? `Progress to ${next.name}` : 'Top rank')}
+      <div className="mt-1 truncate text-[11px] text-white/50">{next ? `${toNext.toLocaleString()} to ${next.icon} ${next.name}` : 'Top rank'}</div>
+    </section>
+  )
+}
+
+function LevelMini({ level, into, need, toNext }: { level: number; into: number; need: number; toNext: number }) {
+  return (
+    <section aria-label={`Level ${level}`} className={MINI}>
+      <div className="label">Level</div>
+      <div className="flex items-center gap-2">
+        <span className="grid h-7 min-w-7 place-items-center rounded-lg bg-lime px-1 font-display text-base font-extrabold text-ink shadow-[0_2px_0_#7fb01a]">{level}</span>
+        <span className="font-display text-lg font-extrabold">Level {level}</span>
+      </div>
+      {miniBar(into / need, 'linear-gradient(90deg,#c6ff4d,#6fd3ff)', `Progress to level ${level + 1}`)}
+      <div className="mt-1 truncate text-[11px] text-white/50">{toNext.toLocaleString()} XP to Lv {level + 1}</div>
     </section>
   )
 }
