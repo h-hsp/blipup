@@ -10,7 +10,7 @@ export const ACHIEVEMENTS: { id: string; icon: string; name: string; desc: strin
   { id: 'ten', icon: '🔟', name: 'Ten Deep', desc: 'Collect 10 different Blips', done: (_, c) => c.size >= 10 },
   { id: 'commons', icon: '🟢', name: 'Common Ground', desc: 'Collect every 1★ Blip', done: all(1) },
   { id: 'legend', icon: '👑', name: 'Legend Hunter', desc: 'Catch any 4★ Blip', done: (_, c) => BLIPS.some((b) => b.rarity === 4 && c.has(b.id)) },
-  { id: 'all', icon: '🏆', name: "Gotta Blip 'Em All", desc: 'Collect all 30 Blips', done: (_, c) => c.size >= BLIPS.length },
+  { id: 'all', icon: '🏆', name: "Gotta Blip 'Em All", desc: `Collect all ${BLIPS.length} Blips`, done: (_, c) => c.size >= BLIPS.length },
   { id: 'fire', icon: '🔥', name: 'On Fire', desc: '3-day streak', done: (p) => p.best_streak >= 3 },
   { id: 'unstoppable', icon: '⚡', name: 'Unstoppable', desc: '7-day streak', done: (p) => p.best_streak >= 7 },
   { id: 'century', icon: '💯', name: 'Century', desc: '100 pushups in one session', done: (p) => p.best_session >= 100 },

@@ -6,7 +6,7 @@ import { supabase } from '../lib/supabase'
 const SLIDES = [
   { art: '/art/onboard-1.webp', title: 'Every rep sends a blip', body: 'Pick a pushup target. Each rep sends out a ripple that lures in a Blip.' },
   { art: '/art/onboard-2.webp', title: 'Catch it in a bubble', body: 'Bigger targets = better catch rates. 2 throws per Blip. Miss both? Use a Double Bubble or let it bounce.' },
-  { art: '/art/onboard-3.webp', title: 'Collect all 30', body: 'From sleepy Bedrot to the legendary GOAT. Keep your streak alive to earn more Double Bubbles.' },
+  { art: '/art/onboard-3.webp', title: 'Collect them all', body: '70 Blips, from sleepy Bedrot to the legendary GOAT. Keep your streak alive to earn more Double Bubbles.' },
 ]
 
 export function Onboarding() {

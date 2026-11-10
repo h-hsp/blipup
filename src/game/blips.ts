@@ -19,10 +19,11 @@ export interface Blip {
   escapeLine: string
   color: string
   color2: string
-  shape: Shape
-  eyes: Eyes
-  mouth: Mouth
-  extras: Extra[]
+  // SVG-era fields: art is now images, so newer Blips leave these out.
+  shape?: Shape
+  eyes?: Eyes
+  mouth?: Mouth
+  extras?: Extra[]
   idle: Idle
 }
 
@@ -65,6 +66,52 @@ export const BLIPS: Blip[] = [
   { id: 'finalboss', name: 'Final Boss', rarity: 4, trait: 'Cosmic', bio: 'A whole galaxy lives inside it. It has been waiting for a worthy challenger.', catchLine: 'You... are worthy.', escapeLine: 'Final Boss opened a wormhole and left.', color: '#5B2BD9', color2: '#16093F', shape: 'drop', eyes: 'glow', mouth: 'none', extras: ['galaxy'], idle: 'float' },
   { id: 'villainera', name: 'Villain Era', rarity: 4, trait: 'Stormy', bio: 'Was nice once. Then it got left on read. Now it brings the storm.', catchLine: 'Fine. Redemption arc unlocked.', escapeLine: 'Villain Era spun off in a tornado.', color: '#4A4E6B', color2: '#1C1E30', shape: 'blob', eyes: 'angry', mouth: 'smirk', extras: ['cloud'], idle: 'sway' },
   { id: 'lore', name: 'Lore', rarity: 4, trait: 'Ancient', bio: 'Older than the internet. Knows the deep lore of every Blip that ever lived.', catchLine: 'The runes foretold this.', escapeLine: 'Lore crumbled to sand and drifted off.', color: '#9C8F7A', color2: '#5E5444', shape: 'boxy', eyes: 'glow', mouth: 'flat', extras: ['runes'], idle: 'breathe' },
+
+  // ── Explorer wave (Override / Treasure Hunter cues) ──
+  // 1★ Common
+  { id: "bestie", name: "Bestie", rarity: 1, trait: "Loyal", bio: "Will hype your worst set like it was a world record.", catchLine: "Bestie for life. Literally.", escapeLine: "Bestie said \"brb\" and never came back.", color: "#FF9A7A", color2: "#E5674A", idle: "bounce" },
+  { id: "scout", name: "Scout", rarity: 1, trait: "Excited explorer", bio: "Has a map for everywhere. Has never once read one.", catchLine: "New map unlocked!", escapeLine: "Scout wandered off to explore.", color: "#3FD6C6", color2: "#1A9C95", idle: "bounce" },
+  { id: "shrubby", name: "Shrubby", rarity: 1, trait: "Bashful", bio: "Thinks it is invisible in a hedge. It is not.", catchLine: "...you found me?", escapeLine: "Shrubby blended back into a hedge.", color: "#7BD45A", color2: "#3E8F2E", idle: "breathe" },
+  { id: "floaty", name: "Floaty", rarity: 1, trait: "Helpful", bio: "Lights the way for lost reps. Very gentle. Very floaty.", catchLine: "Lighting the way!", escapeLine: "Floaty drifted off on its cloud.", color: "#A8F0D2", color2: "#62C9A3", idle: "float" },
+  { id: "shieldy", name: "Shieldy", rarity: 1, trait: "Protective", bio: "Guards its egg, its snacks and your streak.", catchLine: "Guarded. Protected. Caught.", escapeLine: "Shieldy rolled away hugging its egg.", color: "#8FD3FF", color2: "#4A9BD6", idle: "sway" },
+  { id: "snacky", name: "Snacky", rarity: 1, trait: "Snack-loving wanderer", bio: "Will follow you anywhere if you have crackers.", catchLine: "Got any crackers?", escapeLine: "Snacky followed a snack trail away.", color: "#FFD25A", color2: "#E5A21F", idle: "bounce" },
+  { id: "partyy", name: "Partyy", rarity: 1, trait: "Party animal", bio: "Every rep is a party. Every set is the afterparty.", catchLine: "LET'S GOOO!", escapeLine: "Partyy left for the afterparty.", color: "#FFF1D6", color2: "#FFB0D9", idle: "jitter" },
+  { id: "gizmo", name: "Gizmo", rarity: 1, trait: "Tinkerer", bio: "Fixed the same thing nine times. It is now worse.", catchLine: "Fixed it! (I think.)", escapeLine: "Gizmo clanked off to fix something else.", color: "#E08A3C", color2: "#A65A1D", idle: "wobble" },
+  { id: "finn", name: "Finn", rarity: 1, trait: "Proud swimmer", bio: "Found one seashell. Will not stop talking about it.", catchLine: "Want to see my shell?", escapeLine: "Finn swam back to the shallows.", color: "#4FB4FF", color2: "#1E73C9", idle: "float" },
+  { id: "northy", name: "Northy", rarity: 1, trait: "Guide", bio: "Always knows where north is. Rarely knows where it is.", catchLine: "North is... that way!", escapeLine: "Northy followed its compass. Wrong way.", color: "#8EC9FF", color2: "#4F8FD6", idle: "sway" },
+  { id: "squiddy", name: "Squiddy", rarity: 1, trait: "Curious kid", bio: "Pokes everything. Has been bitten by most things.", catchLine: "Ooh, what's this?", escapeLine: "Squiddy wiggled off to poke a crab.", color: "#FF8FC8", color2: "#E0559A", idle: "wobble" },
+  { id: "splash", name: "Splash", rarity: 1, trait: "Hype", bio: "Screams every time you finish a set. Gets everyone wet.", catchLine: "SPLASHHH!", escapeLine: "Splash dove into a puddle and vanished.", color: "#3FE0E8", color2: "#13A5B8", idle: "bounce" },
+  // 2★ Uncommon
+  { id: "speedrun", name: "Speedrun", rarity: 2, trait: "Competitive", bio: "Has a personal best for everything, including blinking.", catchLine: "New PB!", escapeLine: "Speedrun was gone before you blinked.", color: "#FF8A2E", color2: "#D9560E", idle: "jitter" },
+  { id: "rival", name: "Rival", rarity: 2, trait: "Serious rival", bio: "Does one more rep than you. Every time.", catchLine: "Fine. Rematch tomorrow.", escapeLine: "Rival stormed off to train.", color: "#E5324A", color2: "#9E1529", idle: "sway" },
+  { id: "eightbit", name: "8-Bit", rarity: 2, trait: "Retro", bio: "Speaks only in bloops. Lives at 60 frames a second.", catchLine: "*happy bloop*", escapeLine: "8-Bit despawned.", color: "#4F8BFF", color2: "#2047C9", idle: "jitter" },
+  { id: "turbo", name: "Turbo", rarity: 2, trait: "Kinetic", bio: "Strapped a rocket to itself. Does not regret it.", catchLine: "Full throttle!", escapeLine: "Turbo rocketed into the sky.", color: "#2E9BFF", color2: "#1257C9", idle: "float" },
+  { id: "puddle", name: "Puddle", rarity: 2, trait: "Hop-happy", bio: "Never met a lily pad it did not jump on.", catchLine: "Ribbit! Caught!", escapeLine: "Puddle hopped to the next lily pad.", color: "#49D9A0", color2: "#1F9E6E", idle: "bounce" },
+  { id: "breezy", name: "Breezy", rarity: 2, trait: "Weather-watcher", bio: "Can smell rain three days away. Also smells snacks.", catchLine: "Feels like a catch kind of day.", escapeLine: "Breezy blew away on a gust.", color: "#EAF4FF", color2: "#A9C6E8", idle: "float" },
+  { id: "scrapz", name: "Scrapz", rarity: 2, trait: "Scavenger", bio: "Keeps everything. Especially the things you threw out.", catchLine: "Ooh, can I keep you?", escapeLine: "Scrapz ran off with your bottle cap.", color: "#D9692E", color2: "#9E4317", idle: "wobble" },
+  { id: "honeybun", name: "Honeybun", rarity: 2, trait: "Beekeeper", bio: "Its bees are its best friends. The bees agree.", catchLine: "Bzz! Sweet catch.", escapeLine: "Honeybun buzzed off with its bees.", color: "#FFB43A", color2: "#D97E0F", idle: "float" },
+  { id: "duo", name: "Duo", rarity: 2, trait: "Two-sided", bio: "Half morning person, half night owl. Fully confusing.", catchLine: "Good morning AND good night!", escapeLine: "Duo split up and left both ways.", color: "#FFD84D", color2: "#2B3F99", idle: "sway" },
+  { id: "pockets", name: "Pockets", rarity: 2, trait: "Treasure seeker", bio: "Forty pockets. Thirty-nine of them have snacks.", catchLine: "Check pocket thirty-nine.", escapeLine: "Pockets jingled away.", color: "#D9B47A", color2: "#A07E45", idle: "bounce" },
+  { id: "kelp", name: "Kelp", rarity: 2, trait: "Healer", bio: "Very calm. Makes everyone else calm. Suspiciously calm.", catchLine: "Breathe in. Caught.", escapeLine: "Kelp drifted back to the reef.", color: "#7FE6C2", color2: "#3AAE8C", idle: "breathe" },
+  { id: "ping", name: "Ping", rarity: 2, trait: "Messenger", bio: "Delivering your message. ETA: eventually.", catchLine: "Message delivered!", escapeLine: "Ping left. Slowly.", color: "#A3A9B8", color2: "#6B7180", idle: "sway" },
+  // 3★ Epic
+  { id: "boing", name: "Boing", rarity: 3, trait: "Springy", bio: "Cannot stand still. Has tried. Bounced off the ceiling.", catchLine: "BOING! Caught!", escapeLine: "Boing bounced over the horizon.", color: "#A6F03A", color2: "#6CB516", idle: "bounce" },
+  { id: "parkour", name: "Parkour", rarity: 3, trait: "Acrobat", bio: "Will not use stairs. Has never used stairs.", catchLine: "Stuck the landing.", escapeLine: "Parkour flipped over a wall and left.", color: "#6B7A8F", color2: "#3E4A5C", idle: "jitter" },
+  { id: "scanz", name: "Scanz", rarity: 3, trait: "Analyst", bio: "Has already counted your reps. And judged them.", catchLine: "Scan complete: you're cool.", escapeLine: "Scanz beamed itself away.", color: "#B49CFF", color2: "#7656D6", idle: "float" },
+  { id: "jumpscare", name: "Jumpscare", rarity: 3, trait: "Easily startled", bio: "Scared of loud noises, quiet noises and its own reflection.", catchLine: "AAH! Oh. It's you.", escapeLine: "Jumpscare got spooked and vanished.", color: "#B8D4FF", color2: "#7A9CE0", idle: "jitter" },
+  { id: "dreamy", name: "Dreamy", rarity: 3, trait: "Gentle helper", bio: "Sprinkles good luck on your next catch. Probably.", catchLine: "Sweet dreams, catcher.", escapeLine: "Dreamy floated off on a sparkle.", color: "#FFB8DA", color2: "#E57AAE", idle: "float" },
+  { id: "countwobble", name: "Count Wobble", rarity: 3, trait: "Dramatic", bio: "Only comes out at night. Insists on a dramatic entrance.", catchLine: "Bleh! Caught dramatically.", escapeLine: "Count Wobble swept away in its cape.", color: "#9E1F3D", color2: "#5C0E22", idle: "sway" },
+  { id: "antlers", name: "Antlers", rarity: 3, trait: "Fearless", bio: "Graceful, quiet, and will absolutely not back down.", catchLine: "A worthy catch.", escapeLine: "Antlers bounded into the forest.", color: "#3FAE6B", color2: "#1E6E40", idle: "breathe" },
+  { id: "mapsy", name: "Mapsy", rarity: 3, trait: "Cartographer", bio: "Draws a map of everywhere it goes. X always marks you.", catchLine: "X marks the catch!", escapeLine: "Mapsy folded itself up and blew away.", color: "#E8D3A8", color2: "#B89A62", idle: "wobble" },
+  { id: "slam", name: "Slam", rarity: 3, trait: "Show-off", bio: "Does not land. It ARRIVES.", catchLine: "BOOM. Arrived.", escapeLine: "Slam leapt off with a shockwave.", color: "#23C2B5", color2: "#0E8A80", idle: "bounce" },
+  // 4★ Legendary
+  { id: "fancy", name: "Fancy", rarity: 4, trait: "Regal perfectionist", bio: "Has opinions about your form. All of them are correct.", catchLine: "Acceptable. Barely.", escapeLine: "Fancy left. It had tea plans.", color: "#C9A6FF", color2: "#8F63D9", idle: "sway" },
+  { id: "chonk", name: "Chonk", rarity: 4, trait: "Gentle giant", bio: "Huge. Hungry. Would never hurt a fly. Might eat one.", catchLine: "Big hug!", escapeLine: "Chonk waddled off for snacks.", color: "#C98A4E", color2: "#8A5527", idle: "breathe" },
+  { id: "spinout", name: "Spinout", rarity: 4, trait: "Whirlwind", bio: "Spun so fast it forgot which way it was going.", catchLine: "Wheee... wait, caught?", escapeLine: "Spinout spun off into the distance.", color: "#A46BFF", color2: "#6A2FD6", idle: "wobble" },
+  { id: "phantom", name: "Phantom", rarity: 4, trait: "Ghostly speedster", bio: "Was here. Now it is not. Was that a Blip?", catchLine: "Boo! ...you saw me?", escapeLine: "Phantom vanished mid-zoom.", color: "#CFE8FF", color2: "#7FB2E6", idle: "float" },
+  { id: "wishy", name: "Wishy", rarity: 4, trait: "Wish-maker", bio: "Grants one wish per day. Today's wish: more reps.", catchLine: "Your wish came true.", escapeLine: "Wishy granted itself a holiday.", color: "#FFF6D6", color2: "#E8C35A", idle: "float" },
+  { id: "capnwobble", name: "Cap'n Wobble", rarity: 4, trait: "Treasure pirate", bio: "Claims every chest it sees. Has never opened one.", catchLine: "Arr, ye caught me fair!", escapeLine: "Cap'n Wobble sailed off with the treasure.", color: "#3FBF8F", color2: "#1E7A5A", idle: "sway" },
+  { id: "moonbeam", name: "Moonbeam", rarity: 4, trait: "Dream drifter", bio: "Sleeps on the moon. Wakes up only for legendary reps.", catchLine: "Zzz... caught... zzz", escapeLine: "Moonbeam drifted back to the moon.", color: "#F2EEDC", color2: "#C9C2A0", idle: "breathe" },
 ]
 
 export const blipById = (id: string) => BLIPS.find((b) => b.id === id)!
