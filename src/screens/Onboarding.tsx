@@ -78,7 +78,7 @@ export function Onboarding() {
               ) : (
                 <form onSubmit={sendLink} className="mt-8 space-y-3">
                   <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@email.com" autoComplete="email" aria-label="Email"
-                    className="w-full rounded-full bg-white/8 px-5 py-4 text-base outline-none ring-1 ring-white/15 focus:ring-lime" />
+                    className="field w-full px-5 py-4 text-base" />
                   <Button className="w-full" disabled={busy}>Email me a magic link</Button>
                   <button type="button" className="w-full py-2 text-sm text-white/60" onClick={() => { setMode('choose'); setMsg('') }}>Back</button>
                 </form>

@@ -17,6 +17,7 @@ export interface Profile {
   last_session_date: string | null
   daily_claimed_date: string | null
   is_owner: boolean
+  campaign_level: number
 }
 
 export interface Encounter {

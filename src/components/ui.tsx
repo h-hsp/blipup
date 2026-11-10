@@ -12,11 +12,11 @@ export function Stars({ n, className = '' }: { n: number; className?: string }) 
 
 export function Button({ variant = 'primary', className = '', ...p }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: 'primary' | 'ghost' | 'pink' }) {
   const v = {
-    primary: 'bg-lime text-ink shadow-[0_8px_30px_-6px_#c6ff4d80]',
-    pink: 'bg-pink text-ink shadow-[0_8px_30px_-6px_#ff6fb580]',
-    ghost: 'bg-white/8 text-white ring-1 ring-white/12',
+    primary: 'bg-lime text-ink [--edge:#7fb01a]',
+    pink: 'bg-pink text-ink [--edge:#c23d80]',
+    ghost: 'bg-ink-3 text-white',
   }[variant]
-  return <button {...p} className={`press rounded-full px-6 py-4 font-display text-lg font-extrabold ${v} ${className}`} />
+  return <button {...p} className={`btn px-6 py-4 font-display text-lg font-extrabold ${v} ${className}`} />
 }
 
 /** Sticker art on a rarity starburst. locked = silhouette. */
@@ -50,7 +50,7 @@ export function Sheet({ open, onClose, children }: { open: boolean; onClose: () 
         <motion.div className="fixed inset-0 z-40 flex items-end justify-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: 0.15 } }}
           onKeyDown={(e) => e.key === 'Escape' && onClose()}>
           <button aria-label="Close" className="absolute inset-0 cursor-default bg-black/60 backdrop-blur-sm" onClick={onClose} />
-          <motion.div role="dialog" aria-modal className="relative max-h-[90dvh] w-full max-w-md overflow-y-auto rounded-t-[32px] bg-ink-2 p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] ring-1 ring-white/10"
+          <motion.div role="dialog" aria-modal className="relative max-h-[90dvh] w-full max-w-md overflow-y-auto rounded-t-[32px] bg-gradient-to-b from-[#2b2669] to-ink-2 p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] shadow-[inset_0_1.5px_0_#ffffff33]"
             initial={{ y: '100%' }} animate={{ y: 0, transition: { duration: 0.45, ease: [0.32, 0.72, 0, 1] } }} exit={{ y: '100%', transition: { duration: 0.2, ease: [0.23, 1, 0.32, 1] } }}>
             <div className="mx-auto mb-4 h-1.5 w-10 rounded-full bg-white/20" />
             {children}
@@ -61,11 +61,11 @@ export function Sheet({ open, onClose, children }: { open: boolean; onClose: () 
   )
 }
 
-export function Stat({ label, value }: { label: string; value: ReactNode }) {
+export function Stat({ label, value, tone = '' }: { label: string; value: ReactNode; tone?: string }) {
   return (
-    <div className="rounded-3xl bg-white/6 p-4 ring-1 ring-white/8">
-      <div className="font-display text-2xl font-extrabold">{value}</div>
-      <div className="text-xs font-medium text-white/55">{label}</div>
+    <div className="card p-4">
+      <div className={`font-display text-2xl font-extrabold tabular-nums ${tone}`}>{value}</div>
+      <div className="label mt-0.5">{label}</div>
     </div>
   )
 }

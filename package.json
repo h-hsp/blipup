@@ -12,6 +12,7 @@
     "art": "node scripts/optimize-art.mjs"
   },
   "dependencies": {
+    "@mediapipe/tasks-vision": "^1.2.2",
     "@supabase/supabase-js": "^2.119.0",
     "motion": "^14.10.1",
     "react": "^19.3.1",

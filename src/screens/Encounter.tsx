@@ -102,7 +102,7 @@ export function Encounter({ initial, rewards, onDone }: { initial: Enc; rewards:
       <AnimatePresence>
         {toast && (
           <motion.div initial={{ y: -80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -80, opacity: 0, transition: { duration: 0.2 } }} transition={{ type: 'spring', duration: 0.5, bounce: 0.25 }}
-            className="absolute inset-x-5 top-[max(1rem,env(safe-area-inset-top))] z-30 rounded-3xl bg-sun px-5 py-3 text-ink shadow-xl" role="status">
+            className="absolute inset-x-5 top-[max(1rem,env(safe-area-inset-top))] z-30 rounded-3xl bg-sun px-5 py-3 text-ink shadow-[inset_0_1.5px_0_#ffffff80,0_5px_0_#b8862a]" role="status">
             <div className="font-display text-lg font-extrabold">+{rewards.length} Double Bubble{rewards.length > 1 ? 's' : ''} 🫧</div>
             <div className="text-sm font-medium">{rewards.map(rewardText).join(' · ')}</div>
           </motion.div>
@@ -153,10 +153,10 @@ export function Encounter({ initial, rewards, onDone }: { initial: Enc; rewards:
       <motion.div key={`id-${enc.id}`} className="mt-2 text-center" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: reduce ? 0 : 1.5, duration: 0.3, ease: OUT }}>
         <div className="flex items-center justify-center gap-2">
           <h1 className="font-display text-4xl font-extrabold">{blip.name}</h1>
-          {isNew && <span className="rounded-full bg-pink px-2 py-0.5 text-xs font-extrabold text-ink">NEW</span>}
+          {isNew && <span className="rounded-lg bg-pink px-2 py-0.5 text-xs font-extrabold text-ink shadow-[0_2px_0_#c23d80]">NEW</span>}
         </div>
         <div className="mt-1 text-sm font-semibold text-white/60">{blip.trait}</div>
-        <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-black/40 px-4 py-2 ring-1 ring-white/10">
+        <div className="mt-3 inline-flex items-center gap-2 rounded-xl bg-ink-3 px-4 py-2 shadow-[0_3px_0_var(--color-edge)]">
           <span className="flex">
             {Array.from({ length: blip.rarity }, (_, i) => (
               <motion.span key={i} style={{ color }} initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
@@ -223,7 +223,7 @@ function HoldButton({ onFire }: { onFire: () => void }) {
         onPointerUp={() => { if (!holding) return; setHolding(false); if (performance.now() - start.current >= HOLD) onFire() }}
         onPointerCancel={() => setHolding(false)}
         onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), onFire())}
-        className="press relative w-full touch-none overflow-hidden rounded-full bg-white/10 py-5 font-display text-xl font-extrabold ring-1 ring-white/15">
+        className="btn relative w-full touch-none overflow-hidden bg-ink-3 py-5 font-display text-xl font-extrabold">
         <span className="absolute inset-0 bg-lime"
           style={{ clipPath: holding ? 'inset(0 0 0 0)' : 'inset(0 100% 0 0)', transition: holding ? `clip-path ${HOLD}ms linear` : 'clip-path 200ms var(--ease-out)' }} />
         <span className={`relative transition-colors duration-150 ${holding ? 'text-ink' : ''}`}>{holding ? 'Release to throw!' : 'Hold to charge 🫧'}</span>

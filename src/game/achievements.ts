@@ -25,4 +25,5 @@ export const REWARD_TEXT: Record<string, string> = {
   milestone_1000: '1,000 total pushups',
   milestone_5000: '5,000 total pushups',
 }
-export const rewardText = (r: string) => REWARD_TEXT[r] ?? (r.startsWith('streak_') ? `${r.slice(7)}-day streak` : r)
+export const rewardText = (r: string) =>
+  REWARD_TEXT[r] ?? (r.startsWith('streak_') ? `${r.slice(7)}-day streak` : r.startsWith('campaign_') ? `Campaign boss ${r.slice(9)} beaten` : r)
