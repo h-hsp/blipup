@@ -112,3 +112,136 @@ Use these in ChatGPT (or Higgsfield) to redo the 30 original Blips.
 
 **Lore** (`lore`)
 > Lore: an ancient jelly with a cracked stone shell covered in glowing turquoise runes, wise glowing eyes and a little beard of moss, small stone fragments floating around it, holding an old weathered treasure scroll. Gold finish highlights, dramatic light rays behind it.
+
+---
+
+## New Blips (40), from the Override / Treasure Hunter cues
+Same style block and Blub reference as above.
+
+### ★ Common
+
+**Bestie** (`bestie`)
+> Bestie: a sturdy round peach jelly with a huge loyal smile, a little scout neckerchief, giving a big thumbs up.
+
+**Scout** (`scout`)
+> Scout: a small teal jelly with a far-too-big explorer backpack, faint map-line patterns on its body and tiny binoculars around its neck, eyes wide with excitement.
+
+**Shrubby** (`shrubby`)
+> Shrubby: a leafy green jelly half hidden inside a little cloak of leaves, only its blushing face peeking out, a soft leafy outline.
+
+**Floaty** (`floaty`)
+> Floaty: a pale mint jelly floating above a tiny fluffy cloud, holding up a small glowing lantern, kind curious eyes.
+
+**Shieldy** (`shieldy`)
+> Shieldy: a clear bubble-like jelly with a shiny round surface and a brave little frown, holding up a plain silver bottle cap as a tiny shield (no stars, stripes or symbols), guarding a tiny speckled egg.
+
+**Snacky** (`snacky`)
+> Snacky: a plump honey-yellow jelly carrying a little stick bindle stuffed with snacks over its shoulder, cheerful munching cheeks.
+
+**Partyy** (`partyy`)
+> Partyy: a cream jelly covered in rainbow sprinkles wearing a tiny party hat, popping a confetti popper with pure joy.
+
+**Gizmo** (`gizmo`)
+> Gizmo: a copper-orange jelly with brass goggles pushed up, holding a tiny wrench, little gears floating around it.
+
+**Finn** (`finn`)
+> Finn: a sea-blue jelly with little fins on its sides and a snorkel mask, proudly holding up a pink seashell.
+
+**Northy** (`northy`)
+> Northy: a soft sky-blue jelly with a cowlick shaped like a compass needle, holding a brass compass, tiny navigation tokens orbiting it.
+
+**Squiddy** (`squiddy`)
+> Squiddy: a little bubblegum-pink jelly with short wiggly tentacle feet, poking a tiny starfish with one tentacle, curious open mouth.
+
+**Splash** (`splash`)
+> Splash: a bright aqua jelly bursting up out of a splash of water with both arms raised, hyped open mouth, water droplets everywhere.
+
+### ★★ Uncommon
+
+**Speedrun** (`speedrun`)
+> Speedrun: a sleek orange teardrop jelly in racing goggles leaning forward with a motion-blur trail, holding a tiny stopwatch.
+
+**Rival** (`rival`)
+> Rival: a sharp-angled crimson jelly wearing a black headband, narrowed focused eyes, pointing forward in a challenge pose, bold contrasting highlights.
+
+**8-Bit** (`eightbit`)
+> 8-Bit: a square jelly with a checkered pixel pattern, square pixel eyes and a tiny floating pixel heart above its head, crisp silhouette.
+
+**Turbo** (`turbo`)
+> Turbo: a compact electric-blue jelly with a tiny jetpack giving off a soft blue flame, sleek shiny highlights, determined grin.
+
+**Puddle** (`puddle`)
+> Puddle: an aqua-green frog-like jelly with springy legs mid-hop between two little lily pads, happy wide mouth.
+
+**Breezy** (`breezy`)
+> Breezy: a sky-white jelly with soft swirl patterns, windswept, holding a little weathervane, a small gust spiral beside it, clever side glance.
+
+**Scrapz** (`scrapz`)
+> Scrapz: a rusty-orange jelly wearing mismatched trinkets like bottle caps, a spoon and a button necklace, holding up a shiny bolt with clever hands.
+
+**Honeybun** (`honeybun`)
+> Honeybun: an amber jelly with a mellow glow wearing a tiny beekeeper hat with a veil pushed back, two tiny friendly bees flying around it.
+
+**Duo** (`duo`)
+> Duo: a jelly split down the middle, one half sunny yellow with a bright open eye, the other half night blue with a sleepy eye and a little moon, mischievous grin.
+
+**Pockets** (`pockets`)
+> Pockets: a sandy-tan jelly in a cargo explorer vest covered in pockets, gold coins and a tiny map peeking out of them, cheerful grin.
+
+**Kelp** (`kelp`)
+> Kelp: a seafoam jelly with flowing seaweed hair, eyes peacefully closed, holding a tiny glowing pearl.
+
+**Ping** (`ping`)
+> Ping: a small slow grey jelly with a very tall antenna topped with a blinking light, carrying a tiny sealed letter, comically determined.
+
+### ★★★ Epic
+
+**Boing** (`boing`)
+> Boing: a stretchy lime jelly mid-jump on coiled springy legs with long elastic ears, impatient eyes. Richer glow, a few soft sparkles around it.
+
+**Parkour** (`parkour`)
+> Parkour: a slate-grey jelly mid-flip with a utility belt and a coil of climbing rope, focused purposeful face, streamlined details. Richer glow, a few soft sparkles around it.
+
+**Scanz** (`scanz`)
+> Scanz: a silver-violet jelly with one big lens eye surrounded by glowing scanning rings, holding a tiny clipboard, curious expression. Richer glow, a few soft sparkles around it.
+
+**Jumpscare** (`jumpscare`)
+> Jumpscare: a pale ghostly-blue jelly mid-gasp with huge blinking eyes, the bottom half of its body fading invisible. Richer glow, a few soft sparkles around it.
+
+**Dreamy** (`dreamy`)
+> Dreamy: a pastel pink jelly with kind sleepy eyes holding a tiny star wand that sprinkles soft magical particles. Richer glow, a few soft sparkles around it.
+
+**Count Wobble** (`countwobble`)
+> Count Wobble: a deep maroon jelly in a high-collared little cape with two tiny cute fangs, one arm raised theatrically, a small bat-shaped shadow behind it. Richer glow, a few soft sparkles around it.
+
+**Antlers** (`antlers`)
+> Antlers: an elegant forest-green jelly with branching glowing crystal antlers, standing in a strong proud stance. Richer glow, a few soft sparkles around it.
+
+**Mapsy** (`mapsy`)
+> Mapsy: a parchment-coloured jelly covered in faint map lines with a big red X on its tummy, holding a quill pen, delighted discovery face. Richer glow, a few soft sparkles around it.
+
+**Slam** (`slam`)
+> Slam: a chunky teal jelly landing hard with a glowing shockwave ring on the ground, cool confident smirk, one fist down. Richer glow, a few soft sparkles around it.
+
+### ★★★★ Legendary
+
+**Fancy** (`fancy`)
+> Fancy: a lavender jelly with a gold monocle, an ornate tiny velvet cape and a tiny teacup, nose held proudly up. Gold finish highlights, dramatic light rays behind it.
+
+**Chonk** (`chonk`)
+> Chonk: a big round chubby brown-sugar jelly with a huge happy grin and soft rounded proportions, hugging a giant cookie. Gold finish highlights, dramatic light rays behind it.
+
+**Spinout** (`spinout`)
+> Spinout: a violet jelly spinning inside a little whirlwind, stretched elastic body and a surprised face, small leaves and pebbles orbiting it. Gold finish highlights, dramatic light rays behind it.
+
+**Phantom** (`phantom`)
+> Phantom: a translucent glowing ghost jelly zooming sideways with long trailing wisps and a mischievous grin. Gold finish highlights, dramatic light rays behind it.
+
+**Wishy** (`wishy`)
+> Wishy: a starlight-white jelly with glowing gold markings across its body, holding a little shooting-star wand, calm mysterious smile. Gold finish highlights, dramatic light rays behind it.
+
+**Cap'n Wobble** (`capnwobble`)
+> Cap'n Wobble: a sea-green jelly in a tricorn captain's hat and an eyepatch with a gold tooth grin, one foot on a small treasure chest, swaggering. Gold finish highlights, dramatic light rays behind it.
+
+**Moonbeam** (`moonbeam`)
+> Moonbeam: a glowing moon-pale jelly curled up asleep on a small crescent moon, dreamy glowing particles drifting around it. Gold finish highlights, dramatic light rays behind it.
