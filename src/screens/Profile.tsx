@@ -9,8 +9,8 @@ import { pref, setPref } from '../lib/fx'
 import { localDate, rpc, supabase, type Encounter } from '../lib/supabase'
 
 export function Profile({ onSettings }: { onSettings: () => void }) {
-  const { user, profile, caught } = useStore()
-  const caughtSet = new Set(caught.map((c) => c.blip_id))
+  const { user, profile, caught, sessions } = useStore()
+  const unlocked = new Set(profile ? ACHIEVEMENTS.filter((a) => a.done({ p: profile, caught, sessions })).map((a) => a.id) : [])
   const avatar = blipById(caught[0]?.blip_id ?? 'blub')
   const { streak } = liveStreak(profile, localDate(), localDate(new Date(Date.now() - 864e5)))
   const xp = profile ? totalXp(profile, caught) : 0
@@ -20,9 +20,9 @@ export function Profile({ onSettings }: { onSettings: () => void }) {
     <div className="space-y-6">
       <header className="flex items-center gap-4">
         <div className="rounded-3xl bg-ink-3 shadow-[inset_0_1.5px_0_#ffffff26,0_4px_0_var(--color-edge)]"><BlipArt blip={avatar} size={76} locked={!caught[0]} idle={false} burst={false} /></div>
-        <div className="flex-1">
-          <h1 className="font-display text-3xl font-extrabold">{profile?.username ?? 'Blipper'}</h1>
-          <p className="text-sm text-white/55">{user?.is_anonymous ? 'Guest player' : user?.email}</p>
+        <div className="min-w-0 flex-1">
+          <h1 className="truncate font-display text-3xl font-extrabold">{profile?.username ?? 'Blipper'}</h1>
+          <p className="truncate text-sm text-white/55">{user?.is_anonymous ? 'Guest player' : user?.email}</p>
         </div>
         <button onClick={onSettings} aria-label="Settings" className="press grid h-11 w-11 place-items-center rounded-2xl bg-ink-3 text-xl shadow-[0_3px_0_var(--color-edge)]">⚙︎</button>
       </header>
@@ -45,19 +45,30 @@ export function Profile({ onSettings }: { onSettings: () => void }) {
       </div>
 
       <section>
-        <h2 className="font-display text-xl font-extrabold">Achievements</h2>
-        <ul className="mt-3 grid grid-cols-3 gap-3">
-          {ACHIEVEMENTS.map((a) => {
-            const done = !!profile && a.done(profile, caughtSet)
-            return (
-              <li key={a.id} className={`rounded-3xl p-3 text-center ${done ? 'card card-glow [--edge:#4d6b14] [--glow:#c6ff4d]' : 'border-2 border-dashed border-white/12 bg-white/3'}`}>
-                <div className={`text-3xl ${done ? '' : 'opacity-30 grayscale'}`} aria-hidden>{a.icon}</div>
-                <div className="mt-1 text-xs font-bold">{a.name}</div>
-                <div className="text-[10px] leading-tight text-white/45">{done ? 'Unlocked' : a.desc}</div>
-              </li>
-            )
-          })}
-        </ul>
+        <header className="flex items-baseline justify-between">
+          <h2 className="font-display text-xl font-extrabold">Achievements</h2>
+          <span className="font-display text-lg font-extrabold text-lime tabular-nums">{unlocked.size}/{ACHIEVEMENTS.length}</span>
+        </header>
+        {[...new Set(ACHIEVEMENTS.map((a) => a.cat))].map((cat) => {
+          const list = ACHIEVEMENTS.filter((a) => a.cat === cat)
+          return (
+            <div key={cat} className="mt-5">
+              <h3 className="label flex justify-between">{cat}<span className="tabular-nums">{list.filter((a) => unlocked.has(a.id)).length}/{list.length}</span></h3>
+              <ul className="mt-2 grid grid-cols-3 gap-3">
+                {list.map((a) => {
+                  const done = unlocked.has(a.id)
+                  return (
+                    <li key={a.id} className={`rounded-3xl p-3 text-center ${done ? 'card card-glow [--edge:#4d6b14] [--glow:#c6ff4d]' : 'border-2 border-dashed border-white/12 bg-white/3'}`}>
+                      <div className={`text-3xl ${done ? '' : 'opacity-30 grayscale'}`} aria-hidden>{a.icon}</div>
+                      <div className="mt-1 text-xs font-bold">{a.name}</div>
+                      <div className="text-[10px] leading-tight text-white/45">{done ? 'Unlocked' : a.desc}</div>
+                    </li>
+                  )
+                })}
+              </ul>
+            </div>
+          )
+        })}
       </section>
     </div>
   )
