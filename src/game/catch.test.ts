@@ -36,9 +36,9 @@ test('roster is 24/24/20/14 (82) with unique ids', () => {
 })
 
 test('Blipdex sets hold every Blip once, sorted by rarity', () => {
-  assert.deepEqual(SETS.map((s) => s.blips.length), [30, 40, 12])
+  assert.deepEqual(SETS.map((s) => [s.name, s.blips.length]), [['Originals', 6], ['Brainrot', 27], ['Explorer wave', 37], ['Pop culture', 12]])
   const ids = SETS.flatMap((s) => s.blips.map((b) => b.id))
   assert.deepEqual([...ids].sort(), BLIPS.map((b) => b.id).sort())
   for (const s of SETS) s.blips.forEach((b, i) => i && assert.ok(b.rarity >= s.blips[i - 1].rarity, s.name))
-  assert.ok(SETS[2].blips.some((b) => b.id === 'ironblip') && SETS[1].blips.some((b) => b.id === 'mapsy'))
+  assert.ok(SETS[3].blips.some((b) => b.id === 'ironblip') && SETS[2].blips.some((b) => b.id === 'mapsy') && SETS[1].blips.some((b) => b.id === 'rizzlet'))
 })

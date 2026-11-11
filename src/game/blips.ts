@@ -133,11 +133,19 @@ export const BLIPS: Blip[] = [
 
 export const blipById = (id: string) => BLIPS.find((b) => b.id === id)!
 
-/** Blipdex sections, in BLIPS order (each set is one block of the list above), lowest rarity first. */
-export const SETS = ([['Originals', 0, 30], ['Explorer wave', 30, 70], ['Pop culture', 70, 82]] as const).map(([name, from, to]) => ({
-  name,
-  blips: BLIPS.slice(from, to).sort((a, b) => a.rarity - b.rarity),
-}))
+/** Blips named after brainrot, Gen Z and internet terms. New brainrot Blips: add the id here (planned ones are in the BlipUp vault note). */
+export const BRAINROT = new Set([
+  'npc', 'lowkey', 'mewzy', 'delulu', 'yapper', 'bedrot', 'icky', 'fumble', 'brainrot', 'mid', 'rizzlet', 'sigma', 'slay', 'vibez',
+  'aura', 'sus', 'protag', 'drip', 'cottage', 'clutch', 'goat', 'finalboss', 'villainera', 'lore', 'bestie', 'speedrun', 'jumpscare',
+])
+
+/** Blipdex sections, lowest rarity first. Each Blip sits in exactly one (catch.test.ts checks it). */
+export const SETS = ([
+  ['Originals', BLIPS.slice(0, 30).filter((b) => !BRAINROT.has(b.id))],
+  ['Brainrot', BLIPS.filter((b) => BRAINROT.has(b.id))],
+  ['Explorer wave', BLIPS.slice(30, 70).filter((b) => !BRAINROT.has(b.id))],
+  ['Pop culture', BLIPS.slice(70, 82)],
+] as const).map(([name, blips]) => ({ name, blips: [...blips].sort((a, b) => a.rarity - b.rarity) }))
 
 export const RARITY = {
   1: { label: 'Common', color: '#7CF5C4' },
