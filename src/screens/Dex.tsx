@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { BLIPS, RARITY, type Blip } from '../game/blips'
+import { BLIPS, RARITY, SETS, type Blip } from '../game/blips'
 import type { Rarity } from '../game/catch'
 import { BlipArt, Sheet, Stars } from '../components/ui'
 import { useStore } from '../lib/store'
@@ -9,7 +9,6 @@ export function Dex() {
   const [filter, setFilter] = useState<0 | Rarity>(0)
   const [open, setOpen] = useState<Blip | null>(null)
   const times = new Map(caught.map((c) => [c.blip_id, c.times_caught]))
-  const list = BLIPS.filter((b) => !filter || b.rarity === filter)
   const pct = Math.round((caught.length / BLIPS.length) * 100)
 
   return (
@@ -41,23 +40,35 @@ export function Dex() {
         </p>
       )}
 
-      <ul className="mt-4 grid grid-cols-3 gap-3">
-        {list.map((b) => {
-          const n = times.get(b.id)
-          return (
-            <li key={b.id}>
-              <button onClick={() => setOpen(b)}
-                className={`press relative flex w-full flex-col items-center rounded-3xl px-1 pb-3 pt-2 ${n ? 'card card-glow' : 'border-2 border-dashed border-white/12 bg-white/3'}`}
-                style={n ? { ['--glow' as string]: b.color, ['--edge' as string]: `color-mix(in srgb, ${RARITY[b.rarity].color} 40%, #100d2e)` } : undefined}>
-                {n && n > 1 && <span className="absolute right-2 top-2 z-10 rounded-lg bg-ink px-1.5 text-[10px] font-extrabold">×{n}</span>}
-                <BlipArt blip={b} size={92} locked={!n} idle={false} burst={false} />
-                <span className="mt-1 max-w-full truncate px-1 text-sm font-bold">{n ? b.name : '???'}</span>
-                <Stars n={b.rarity} className="text-xs" />
-              </button>
-            </li>
-          )
-        })}
-      </ul>
+      {SETS.map((set) => {
+        const list = set.blips.filter((b) => !filter || b.rarity === filter)
+        if (!list.length) return null
+        return (
+          <section key={set.name} className="mt-6" aria-label={set.name}>
+            <h2 className="flex items-baseline justify-between">
+              <span className="font-display text-xl font-extrabold">{set.name}</span>
+              <span className="text-sm font-bold tabular-nums text-white/50">{set.blips.filter((b) => times.has(b.id)).length}/{set.blips.length}</span>
+            </h2>
+            <ul className="mt-3 grid grid-cols-3 gap-3">
+              {list.map((b) => {
+                const n = times.get(b.id)
+                return (
+                  <li key={b.id}>
+                    <button onClick={() => setOpen(b)}
+                      className={`press relative flex w-full flex-col items-center rounded-3xl px-1 pb-3 pt-2 ${n ? 'card card-glow' : 'border-2 border-dashed border-white/12 bg-white/3'}`}
+                      style={n ? { ['--glow' as string]: b.color, ['--edge' as string]: `color-mix(in srgb, ${RARITY[b.rarity].color} 40%, #100d2e)` } : undefined}>
+                      {n && n > 1 && <span className="absolute right-2 top-2 z-10 rounded-lg bg-ink px-1.5 text-[10px] font-extrabold">×{n}</span>}
+                      <BlipArt blip={b} size={92} locked={!n} idle={false} burst={false} />
+                      <span className="mt-1 max-w-full truncate px-1 text-sm font-bold">{n ? b.name : '???'}</span>
+                      <Stars n={b.rarity} className="text-xs" />
+                    </button>
+                  </li>
+                )
+              })}
+            </ul>
+          </section>
+        )
+      })}
 
       <Sheet open={!!open} onClose={() => setOpen(null)}>
         {open && (() => {

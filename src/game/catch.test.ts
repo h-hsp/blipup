@@ -1,7 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { catchChance, catchPower, rarityOdds } from './catch.ts'
-import { BLIPS } from './blips.ts'
+import { BLIPS, SETS } from './blips.ts'
 
 const near = (a: number, b: number) => assert.ok(Math.abs(a - b) < 1e-9, `${a} ≈ ${b}`)
 
@@ -33,4 +33,12 @@ test('roster is 24/24/20/14 (82) with unique ids', () => {
   assert.deepEqual([count(1), count(2), count(3), count(4)], [24, 24, 20, 14])
   assert.equal(new Set(BLIPS.map((b) => b.id)).size, BLIPS.length)
   assert.equal(BLIPS.length, 82)
+})
+
+test('Blipdex sets hold every Blip once, sorted by rarity', () => {
+  assert.deepEqual(SETS.map((s) => s.blips.length), [30, 40, 12])
+  const ids = SETS.flatMap((s) => s.blips.map((b) => b.id))
+  assert.deepEqual([...ids].sort(), BLIPS.map((b) => b.id).sort())
+  for (const s of SETS) s.blips.forEach((b, i) => i && assert.ok(b.rarity >= s.blips[i - 1].rarity, s.name))
+  assert.ok(SETS[2].blips.some((b) => b.id === 'ironblip') && SETS[1].blips.some((b) => b.id === 'mapsy'))
 })
