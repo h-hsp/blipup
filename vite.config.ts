@@ -3,14 +3,12 @@ import tailwindcss from '@tailwindcss/vite'
 import basicSsl from '@vitejs/plugin-basic-ssl'
 import { defineConfig } from 'vite'
 
-// The camera only works on secure (https) pages, so the local dev server uses a self-signed https certificate
-// (the browser warns once; click Advanced → Proceed). Replit's proxy adds its own https, so skip it there.
-// shortcut: self-signed cert means a one-time browser warning; use a real cert (or the deployed site) for testers
-const https = !process.env.REPL_ID
-
-export default defineConfig({
-  plugins: [react(), tailwindcss(), ...(https ? [basicSsl()] : [])],
+// The camera needs a secure page. http://localhost already counts, so `npm run dev` stays plain http (no warning).
+// `npm run dev:phone` adds a self-signed https cert so a phone on the same WiFi can use the camera.
+// shortcut: self-signed cert shows a browser warning on the phone; the deployed site has a real cert
+export default defineConfig(({ mode }) => ({
+  plugins: [react(), tailwindcss(), ...(mode === 'phone' ? [basicSsl()] : [])],
   // Replit serves on 0.0.0.0 behind its own proxy host
   server: { host: true, allowedHosts: true },
   preview: { host: true, allowedHosts: true },
-})
+}))
