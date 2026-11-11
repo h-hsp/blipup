@@ -72,12 +72,14 @@ export function PushupCam({ onRep, onError, children }: { onRep: () => void; onE
         tick()
       } catch (e) {
         if (stop) return
-        const name = (e as Error).name
+        const { name, message } = e as Error
         cb.current.onError(
           stage === 'model' ? 'Could not load the pushup checker. Check your connection and try again.'
-            : name === 'NotAllowedError' ? 'Camera is blocked. Allow camera access for this site to use the checker.'
-              : name === 'NotFoundError' ? 'No camera found on this device.'
-                : 'Camera could not start. It needs a secure (https) page.',
+            : message === 'insecure' ? 'The camera only works on a secure page: open the app at its https link (or localhost on this computer), not a plain http address.'
+              : name === 'NotAllowedError' ? 'Camera is blocked. Allow camera access for this site (and check the browser is allowed to use the camera).'
+                : name === 'NotFoundError' || name === 'OverconstrainedError' ? 'No front camera found on this device.'
+                  : name === 'NotReadableError' ? 'Camera is busy. Close other apps using it (Teams, Zoom, Camera) and try again.'
+                    : `Camera could not start (${name || 'unknown error'}).`,
         )
       }
     })()
