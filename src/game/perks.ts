@@ -30,16 +30,26 @@ export const PERKS: { id: string; name: string; icon: string; kind: Kind; n: num
   { id: 'completionist', name: 'Completionist', icon: '🏆', kind: 'xp', n: 15, need: 'all' },
 ]
 
-/** Blips still missing for a perk (empty = unlocked). */
-export function perkMissing(perk: (typeof PERKS)[number], owned: Set<string>) {
+/** Perks level up as you fill their collection: Lv 1 at 20% caught … Lv 5 at 100%. Lv 0 does nothing and can't be equipped. */
+export const PERK_LEVELS = 5
+
+export function perkLevel(perk: (typeof PERKS)[number], owned: Set<string>) {
   const pool = perk.need === 'all' ? BLIPS : SETS.find((s) => s.name === perk.need)!.blips
-  return pool.filter((b) => !owned.has(b.id))
+  const have = pool.filter((b) => owned.has(b.id)).length
+  const level = Math.floor((PERK_LEVELS * have) / pool.length) // same integer maths as private.perk_level in SQL
+  return {
+    level,
+    have,
+    total: pool.length,
+    n: (perk.n * level) / PERK_LEVELS,
+    nextAt: level < PERK_LEVELS ? Math.ceil(((level + 1) * pool.length) / PERK_LEVELS) : null, // Blips needed for the next level
+  }
 }
 
 /** Total of each effect from an equipped loadout. */
-export function loadoutTotals(perks: string[], blips: string[]) {
+export function loadoutTotals(perks: string[], blips: string[], owned: Set<string>) {
   const t: Record<Kind, number> = { xp: 0, catch: 0, saver: 0, finder: 0 }
-  for (const id of perks) { const p = PERKS.find((x) => x.id === id); if (p) t[p.kind] += p.n }
+  for (const id of perks) { const p = PERKS.find((x) => x.id === id); if (p) t[p.kind] += perkLevel(p, owned).n }
   for (const id of blips) { const b = BLIPS.find((x) => x.id === id); if (b) { const a = abilityOf(b); t[a.kind] += a.n } }
   return t
 }

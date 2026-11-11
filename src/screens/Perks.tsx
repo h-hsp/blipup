@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { BLIPS, RARITY, blipById } from '../game/blips'
-import { ABILITIES, abilityOf, loadoutTotals, MAX_BLIPS, MAX_PERKS, PERKS, perkMissing, type Kind } from '../game/perks'
+import { ABILITIES, abilityOf, loadoutTotals, MAX_BLIPS, MAX_PERKS, PERK_LEVELS, PERKS, perkLevel, type Kind } from '../game/perks'
 import { BlipArt, Stars } from '../components/ui'
 import { useStore } from '../lib/store'
 import { buzz } from '../lib/fx'
@@ -19,7 +19,7 @@ export function Perks() {
   const [err, setErr] = useState('')
   const [filter, setFilter] = useState<Kind | null>(null)
   const owned = new Set(caught.map((c) => c.blip_id))
-  const totals = loadoutTotals(lo.perks, lo.blips)
+  const totals = loadoutTotals(lo.perks, lo.blips, owned)
 
   async function save(next: { perks: string[]; blips: string[] }) {
     setDraft(next) // show it straight away; the server has the final say
@@ -63,11 +63,12 @@ export function Perks() {
         <div className="mt-4 grid grid-cols-2 gap-2">
           {Array.from({ length: MAX_PERKS }, (_, i) => {
             const p = PERKS.find((x) => x.id === lo.perks[i])
-            return p ? (
-              <button key={i} onClick={() => toggle('perks', p.id, MAX_PERKS)} aria-label={`Take off perk ${p.name}`}
+            const pl = p && perkLevel(p, owned)
+            return p && pl ? (
+              <button key={i} onClick={() => toggle('perks', p.id, MAX_PERKS)} aria-label={`Take off perk ${p.name}, level ${pl.level}`}
                 className="press flex items-center gap-2 rounded-2xl bg-ink-3 p-2.5 text-left shadow-[0_3px_0_var(--color-edge)]">
                 <span className="text-2xl" aria-hidden>{p.icon}</span>
-                <span className="min-w-0"><span className="block truncate text-sm font-extrabold">{p.name}</span><span className="block truncate text-[11px] text-white/55">{amount(p.kind, p.n)} {ABILITIES[p.kind].name}</span></span>
+                <span className="min-w-0"><span className="block truncate text-sm font-extrabold">{p.name} <span className="text-lime">Lv {pl.level}</span></span><span className="block truncate text-[11px] text-white/55">{amount(p.kind, pl.n)} {ABILITIES[p.kind].name}</span></span>
               </button>
             ) : <div key={i} className={`${SLOT} h-[60px] text-xs font-bold`}>Perk slot</div>
           })}
@@ -96,19 +97,29 @@ export function Perks() {
         <h2 className="font-display text-xl font-extrabold">Perks</h2>
         <ul className="mt-3 space-y-2.5">
           {PERKS.map((p) => {
-            const missing = perkMissing(p, owned).length
+            const pl = perkLevel(p, owned)
+            const locked = pl.level === 0
             const on = lo.perks.includes(p.id)
+            const where = p.need === 'all' ? 'Blips' : `${p.need} Blips`
             return (
               <li key={p.id}>
-                <button disabled={missing > 0} onClick={() => toggle('perks', p.id, MAX_PERKS)} aria-pressed={on}
-                  className={`press flex w-full items-center gap-3 rounded-3xl p-3.5 text-left disabled:cursor-not-allowed ${missing ? 'border-2 border-dashed border-white/12 bg-white/3' : on ? 'card card-glow [--glow:#c6ff4d]' : 'card'}`}>
-                  <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-ink-3 text-2xl ${missing ? 'opacity-40 grayscale' : ''}`} aria-hidden>{p.icon}</span>
+                <button disabled={locked} onClick={() => toggle('perks', p.id, MAX_PERKS)} aria-pressed={on} aria-label={`${p.name}, level ${pl.level} of ${PERK_LEVELS}`}
+                  className={`press flex w-full items-center gap-3 rounded-3xl p-3.5 text-left disabled:cursor-not-allowed ${locked ? 'border-2 border-dashed border-white/12 bg-white/3' : on ? 'card card-glow [--glow:#c6ff4d]' : 'card'}`}>
+                  <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-ink-3 text-2xl ${locked ? 'opacity-40 grayscale' : ''}`} aria-hidden>{p.icon}</span>
                   <span className="min-w-0 flex-1">
-                    <span className="block font-display text-lg font-extrabold">{p.name}</span>
-                    <span className="block text-sm text-white/60">{ABILITIES[p.kind].text(p.n)}</span>
-                    <span className="block text-xs text-white/40">{missing ? `Catch every ${p.need === 'all' ? 'Blip' : `${p.need} Blip`} · ${missing} to go` : `Unlocked: ${p.need === 'all' ? 'every Blip caught' : `${p.need} complete`}`}</span>
+                    <span className="flex items-center gap-2">
+                      <span className="font-display text-lg font-extrabold">{p.name}</span>
+                      <span className="text-xs font-extrabold text-lime">Lv {pl.level}</span>
+                    </span>
+                    <span className="mt-1 flex gap-1" aria-hidden>
+                      {Array.from({ length: PERK_LEVELS }, (_, k) => <span key={k} className={`h-1.5 flex-1 rounded-full ${k < pl.level ? 'bg-lime' : 'bg-white/12'}`} />)}
+                    </span>
+                    <span className="mt-1 block text-sm text-white/60">{locked ? `Lv 5: ${ABILITIES[p.kind].text(p.n)}` : `Now: ${ABILITIES[p.kind].text(pl.n)}`}</span>
+                    <span className="block text-xs text-white/40">
+                      {pl.have}/{pl.total} {where} · {pl.nextAt === null ? 'Max level' : `${pl.nextAt - pl.have} more for Lv ${pl.level + 1}${pl.level ? ` · max ${amount(p.kind, p.n)}` : ''}`}
+                    </span>
                   </span>
-                  <span className={`shrink-0 text-xs font-extrabold ${on ? 'text-lime' : 'text-white/45'}`}>{missing ? '🔒' : on ? 'Equipped' : 'Equip'}</span>
+                  <span className={`shrink-0 text-xs font-extrabold ${on ? 'text-lime' : 'text-white/45'}`}>{locked ? '🔒' : on ? 'Equipped' : 'Equip'}</span>
                 </button>
               </li>
             )

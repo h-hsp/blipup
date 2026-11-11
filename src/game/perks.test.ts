@@ -2,7 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { BLIPS, SETS } from './blips.ts'
-import { ABILITIES, abilityOf, loadoutTotals, perkMissing, PERKS } from './perks.ts'
+import { ABILITIES, abilityOf, loadoutTotals, PERK_LEVELS, perkLevel, PERKS } from './perks.ts'
 
 const sql = readFileSync(new URL('../../supabase/migrations/007_loadout.sql', import.meta.url), 'utf8')
 
@@ -21,19 +21,26 @@ test('every ability shows up in every collection', () => {
   for (const s of SETS.filter((x) => x.blips.length >= 4)) assert.equal(new Set(s.blips.map((b) => abilityOf(b).kind)).size, 4, s.name)
 })
 
-test('perks unlock only when the whole collection is caught', () => {
-  const head = PERKS.find((p) => p.id === 'headstart')!
+test('perks level up with the collection and only reach their full boost when it is complete', () => {
+  const head = PERKS.find((p) => p.id === 'headstart')! // Originals: 6 Blips, +10% XP at max
   const originals = SETS[0].blips.map((b) => b.id)
-  assert.equal(perkMissing(head, new Set(originals.slice(1))).length, 1)
-  assert.equal(perkMissing(head, new Set(originals)).length, 0)
-  const all = PERKS.find((p) => p.need === 'all')!
-  assert.equal(perkMissing(all, new Set(originals)).length, BLIPS.length - originals.length)
+  const at = (n: number) => perkLevel(head, new Set(originals.slice(0, n)))
+  assert.deepEqual([0, 1, 2, 3, 4, 5, 6].map((n) => at(n).level), [0, 0, 1, 2, 3, 4, 5])
+  assert.deepEqual([0, 2, 4, 6].map((n) => at(n).n), [0, 2, 6, 10])
+  assert.equal(at(2).nextAt, 3)
+  assert.equal(at(6).nextAt, null)
+  // every perk's value is a whole number at every level, and never above today's max
+  for (const p of PERKS) for (let l = 0; l <= PERK_LEVELS; l++) assert.ok(Number.isInteger((p.n * l) / PERK_LEVELS) && (p.n * l) / PERK_LEVELS <= p.n, p.id)
+  // same perk rows in the levels migration
+  const sql9 = readFileSync(new URL('../../supabase/migrations/009_perk_levels.sql', import.meta.url), 'utf8')
+  for (const p of PERKS) assert.ok(sql9.includes(`('${p.id}', '${p.kind}', ${p.n}, ${p.need === 'all' ? 'null' : `'${p.need}'`})`), p.id)
 })
 
-test('loadout totals add perks and Blip abilities', () => {
+test('loadout totals add levelled perks and Blip abilities', () => {
   const goat = BLIPS.find((b) => b.id === 'goat')! // 4-star Bubble Finder
   assert.deepEqual(abilityOf(goat), { kind: 'finder', n: 20 })
-  const t = loadoutTotals(['headstart', 'packrat'], ['goat', 'blub'])
-  assert.deepEqual(t, { xp: 10 + 5, catch: 0, saver: 20, finder: 20 })
-  assert.deepEqual(loadoutTotals(['nope'], ['nope']), { xp: 0, catch: 0, saver: 0, finder: 0 })
+  const all = new Set(BLIPS.map((b) => b.id))
+  assert.deepEqual(loadoutTotals(['headstart', 'packrat'], ['goat', 'blub'], all), { xp: 10 + 5, catch: 0, saver: 20, finder: 20 })
+  assert.deepEqual(loadoutTotals(['headstart', 'packrat'], [], new Set()), { xp: 0, catch: 0, saver: 0, finder: 0 })
+  assert.deepEqual(loadoutTotals(['nope'], ['nope'], all), { xp: 0, catch: 0, saver: 0, finder: 0 })
 })
