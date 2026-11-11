@@ -76,6 +76,8 @@ export function Profile({ onSettings }: { onSettings: () => void }) {
 
 function RankCard({ reps }: { reps: number }) {
   const { i, rank, next, toNext, pct } = rankInfo(reps)
+  const [sel, setSel] = useState<number | null>(null)
+  const pick = sel === null ? null : RANKS[sel]
   return (
     <section aria-label={`Rank: ${rank.name}`} className="card card-glow p-5" style={{ ['--glow' as string]: rank.color }}>
       <div className="flex items-center gap-4">
@@ -91,12 +93,25 @@ function RankCard({ reps }: { reps: number }) {
         <div className="h-full rounded-full transition-[width] duration-500" style={{ width: `${pct * 100}%`, background: rank.color }} />
       </div>
       <div className="mt-1.5 text-xs text-white/45">{next ? `${toNext.toLocaleString()} pushups to ${next.icon} ${next.name}` : 'Top rank. Absolute unit.'}</div>
-      <ol className="mt-4 flex justify-between" aria-label="All ranks">
+      <ol className="mt-4 flex justify-between" aria-label="All ranks: tap one to see what it needs">
         {RANKS.map((r, k) => (
-          <li key={r.name} title={`${r.name} · ${r.min.toLocaleString()} pushups`} aria-label={`${r.name}, ${r.min} pushups${k <= i ? ', reached' : ''}`}
-            className={`grid h-7 w-7 place-items-center rounded-lg text-base ${k === i ? 'bg-white/15 ring-2 ring-white/60' : ''} ${k > i ? 'opacity-30 grayscale' : ''}`}>{r.icon}</li>
+          <li key={r.name}>
+            <button onClick={() => setSel(sel === k ? null : k)} aria-pressed={sel === k} aria-label={`${r.name}, ${r.min} pushups${k <= i ? ', reached' : ''}`}
+              className={`press grid h-7 w-7 place-items-center rounded-lg text-base ${k === i ? 'bg-white/15 ring-2 ring-white/60' : ''} ${sel === k ? 'ring-2' : ''} ${k > i && sel !== k ? 'opacity-30 grayscale' : ''}`}
+              style={sel === k ? { ['--tw-ring-color' as string]: r.color } : undefined}>{r.icon}</button>
+          </li>
         ))}
       </ol>
+      {pick && (
+        <div role="status" className="mt-3 flex items-center gap-3 rounded-2xl bg-ink/60 px-3 py-2.5 ring-1 ring-white/10">
+          <span className="text-2xl" aria-hidden>{pick.icon}</span>
+          <div className="min-w-0 flex-1">
+            <div className="font-display font-extrabold" style={{ color: pick.color }}>{pick.name}</div>
+            <div className="text-xs text-white/60">{pick.min.toLocaleString()} total pushups</div>
+          </div>
+          <span className={`text-xs font-extrabold ${reps >= pick.min ? 'text-lime' : 'text-white/60'}`}>{reps >= pick.min ? 'Reached ✓' : `${(pick.min - reps).toLocaleString()} to go`}</span>
+        </div>
+      )}
     </section>
   )
 }

@@ -112,6 +112,23 @@ export const BLIPS: Blip[] = [
   { id: "wishy", name: "Wishy", rarity: 4, trait: "Wish-maker", bio: "Grants one wish per day. Today's wish: more reps.", catchLine: "Your wish came true.", escapeLine: "Wishy granted itself a holiday.", color: "#FFF6D6", color2: "#E8C35A", idle: "float" },
   { id: "capnwobble", name: "Cap'n Wobble", rarity: 4, trait: "Treasure pirate", bio: "Claims every chest it sees. Has never opened one.", catchLine: "Arr, ye caught me fair!", escapeLine: "Cap'n Wobble sailed off with the treasure.", color: "#3FBF8F", color2: "#1E7A5A", idle: "sway" },
   { id: "moonbeam", name: "Moonbeam", rarity: 4, trait: "Dream drifter", bio: "Sleeps on the moon. Wakes up only for legendary reps.", catchLine: "Zzz... caught... zzz", escapeLine: "Moonbeam drifted back to the moon.", color: "#F2EEDC", color2: "#C9C2A0", idle: "breathe" },
+
+  // ── Pop-culture set: Blips in costume (parody homages, art in the original painted sticker style) ──
+  // 2★ Uncommon
+  { id: 'babyblipa', name: 'Baby Blipa', rarity: 2, trait: 'Snack thief', bio: 'Tiny, green, enormous ears. Will absolutely eat your snacks and look adorable doing it.', catchLine: '*happy cookie noises*', escapeLine: 'Baby Blipa floated off in its cardigan.', color: '#A9D98A', color2: '#6FA857', idle: 'breathe' },
+  { id: 'blipubu', name: 'Blipubu', rarity: 2, trait: 'Mischief plush', bio: 'Sold out everywhere. Somehow showed up for your pushups anyway.', catchLine: 'Hehehe. Clip me on.', escapeLine: 'Blipubu sold out again.', color: '#F2E2C4', color2: '#C9AE84', idle: 'jitter' },
+  { id: 'spongeblip', name: 'SpongeBlip', rarity: 2, trait: 'Always ready', bio: 'Soaks up good vibes, bad vibes and about a litre of seawater.', catchLine: "I'm ready! I'm ready!", escapeLine: 'SpongeBlip bubbled away.', color: '#FFE45C', color2: '#D9B52B', idle: 'bounce' },
+  { id: 'blipcraft', name: 'Blipcraft', rarity: 2, trait: 'Block builder', bio: 'Punches trees for fun. Builds a dirt hut after every set.', catchLine: 'Achievement get!', escapeLine: 'Blipcraft dug straight down.', color: '#8EDB5A', color2: '#4E9B2E', idle: 'wobble' },
+  // 3★ Epic
+  { id: 'stormblipper', name: 'Stormblipper', rarity: 3, trait: 'Terrible aim', bio: 'Has never once hit its target. You are its first.', catchLine: 'Finally! A hit!', escapeLine: 'Stormblipper missed the exit. Then found it.', color: '#F2F4F8', color2: '#B9BFCC', idle: 'wobble' },
+  { id: 'hedgeblip', name: 'Hedgeblip', rarity: 3, trait: 'Gotta go fast', bio: 'Does pushups so fast the counter cannot keep up.', catchLine: 'Too slow! ...wait, caught.', escapeLine: 'Hedgeblip zoomed off in a blue blur.', color: '#3D7BFF', color2: '#1E4FC7', idle: 'jitter' },
+  { id: 'spiderblip', name: 'Spider-Blip', rarity: 3, trait: 'Friendly neighbour', bio: 'Sticks to walls, ceilings and its daily streak.', catchLine: 'Thwip! Caught in your web.', escapeLine: 'Spider-Blip swung off on a thread.', color: '#E8323C', color2: '#2A4DB3', idle: 'sway' },
+  { id: 'batblip', name: 'Bat-Blip', rarity: 3, trait: 'Night trainer', bio: 'Only trains at night. Brooding is part of the warm-up.', catchLine: "I'm... caught.", escapeLine: 'Bat-Blip vanished mid-sentence.', color: '#4A4A58', color2: '#26262F', idle: 'float' },
+  { id: 'superblipio', name: 'Super Blipio', rarity: 3, trait: 'Jumps on everything', bio: 'Jumps on everything. Including you, apparently.', catchLine: 'Wahoo! Here we go!', escapeLine: 'Super Blipio jumped down a pipe.', color: '#FF9C7A', color2: '#E0412F', idle: 'bounce' },
+  // 4★ Legendary
+  { id: 'ironblip', name: 'Iron Blip', rarity: 4, trait: 'Genius in a suit', bio: 'Built its power suit in a cave. Out of jelly. Still flies.', catchLine: 'I am... caught.', escapeLine: 'Iron Blip jetted off into the sky.', color: '#D93A32', color2: '#E8B53A', idle: 'float' },
+  { id: 'darthblipper', name: 'Darth Blipper', rarity: 4, trait: 'Heavy breather', bio: 'Breathes really heavily after every rep. Finds your lack of pushups disturbing.', catchLine: 'Impressive. Most impressive.', escapeLine: 'Darth Blipper swept off, breathing loudly.', color: '#3A3A44', color2: '#C2232F', idle: 'breathe' },
+  { id: 'blipzilla', name: 'Blipzilla', rarity: 4, trait: 'City stomper', bio: 'A giant (for a Blip) lizard that stomps on skipped leg days.', catchLine: 'RAWR! ...ok, fair catch.', escapeLine: 'Blipzilla stomped back into the sea.', color: '#4E9B4A', color2: '#2C6A2A', idle: 'sway' },
 ]
 
 export const blipById = (id: string) => BLIPS.find((b) => b.id === id)!

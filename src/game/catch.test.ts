@@ -28,9 +28,9 @@ test('legendaries locked below 30 reps, odds always sum to 100', () => {
   }
 })
 
-test('roster is 24/20/15/11 (70) with unique ids', () => {
+test('roster is 24/24/20/14 (82) with unique ids', () => {
   const count = (r: number) => BLIPS.filter((b) => b.rarity === r).length
-  assert.deepEqual([count(1), count(2), count(3), count(4)], [24, 20, 15, 11])
+  assert.deepEqual([count(1), count(2), count(3), count(4)], [24, 24, 20, 14])
   assert.equal(new Set(BLIPS.map((b) => b.id)).size, BLIPS.length)
-  assert.equal(BLIPS.length, 70)
+  assert.equal(BLIPS.length, 82)
 })
