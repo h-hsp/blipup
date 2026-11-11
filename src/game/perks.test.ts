@@ -2,7 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { BLIPS, SETS } from './blips.ts'
-import { ABILITIES, abilityOf, loadoutTotals, PERK_LEVELS, perkLevel, PERKS } from './perks.ts'
+import { ABILITIES, abilityOf, levelNeed, loadoutTotals, PERK_LEVELS, perkLevel, PERKS } from './perks.ts'
 
 const sql = readFileSync(new URL('../../supabase/migrations/007_loadout.sql', import.meta.url), 'utf8')
 
@@ -43,4 +43,15 @@ test('loadout totals add levelled perks and Blip abilities', () => {
   assert.deepEqual(loadoutTotals(['headstart', 'packrat'], ['goat', 'blub'], all), { xp: 10 + 5, catch: 0, saver: 20, finder: 20 })
   assert.deepEqual(loadoutTotals(['headstart', 'packrat'], [], new Set()), { xp: 0, catch: 0, saver: 0, finder: 0 })
   assert.deepEqual(loadoutTotals(['nope'], ['nope'], all), { xp: 0, catch: 0, saver: 0, finder: 0 })
+})
+
+test('levelNeed gives the first Blip count that reaches each level', () => {
+  for (const total of [6, 12, 27, 37, 82]) {
+    for (let l = 1; l <= PERK_LEVELS; l++) {
+      const need = levelNeed(l, total)
+      assert.equal(Math.floor((PERK_LEVELS * need) / total), l, `${total} Lv${l}`)
+      assert.ok(Math.floor((PERK_LEVELS * (need - 1)) / total) < l, `${total} Lv${l} minimal`)
+    }
+    assert.equal(levelNeed(PERK_LEVELS, total), total)
+  }
 })

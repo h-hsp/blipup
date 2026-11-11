@@ -33,7 +33,17 @@ export function PushupCam({ onRep, onError, children }: { onRep: () => void; onE
       try {
         // Undefined on plain http (not localhost): the browser only gives the camera to secure pages.
         if (!navigator.mediaDevices?.getUserMedia) throw new Error('insecure')
-        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } }, audio: false })
+        // Retry "camera busy": in dev, React mounts this twice and the first request may still hold the camera
+        // for a moment (Windows reports NotReadableError). Also helps when another app just let go of it.
+        for (let tries = 3; ; tries--) {
+          try {
+            stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } }, audio: false })
+            break
+          } catch (e) {
+            if ((e as Error).name !== 'NotReadableError' || tries <= 1 || stop) throw e
+            await new Promise((r) => setTimeout(r, 500))
+          }
+        }
         if (stop) return stream.getTracks().forEach((t) => t.stop())
         const v = video.current!
         v.srcObject = stream

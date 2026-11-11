@@ -42,9 +42,12 @@ export function perkLevel(perk: (typeof PERKS)[number], owned: Set<string>) {
     have,
     total: pool.length,
     n: (perk.n * level) / PERK_LEVELS,
-    nextAt: level < PERK_LEVELS ? Math.ceil(((level + 1) * pool.length) / PERK_LEVELS) : null, // Blips needed for the next level
+    nextAt: level < PERK_LEVELS ? levelNeed(level + 1, pool.length) : null, // Blips needed for the next level
   }
 }
+
+/** Blips of a collection you need for a perk level (the smallest count that reaches it). */
+export const levelNeed = (level: number, total: number) => Math.ceil((level * total) / PERK_LEVELS)
 
 /** Total of each effect from an equipped loadout. */
 export function loadoutTotals(perks: string[], blips: string[], owned: Set<string>) {
