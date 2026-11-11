@@ -18,6 +18,8 @@ export interface Profile {
   daily_claimed_date: string | null
   is_owner: boolean
   campaign_level: number
+  loadout: { perks: string[]; blips: string[] }
+  bonus_xp: number
 }
 
 export interface Encounter {

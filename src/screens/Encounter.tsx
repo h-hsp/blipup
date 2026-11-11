@@ -19,6 +19,7 @@ export function Encounter({ initial, rewards, onDone }: { initial: Enc; rewards:
   const [phase, setPhase] = useState<Phase>('reveal')
   const [throws, setThrows] = useState(0)
   const [err, setErr] = useState('')
+  const [note, setNote] = useState('')
   const [toast, setToast] = useState(rewards.length > 0)
   const blip = blipById(enc.blip_id)
   const color = RARITY[blip.rarity].color
@@ -70,7 +71,9 @@ export function Encounter({ initial, rewards, onDone }: { initial: Enc; rewards:
   async function boost() {
     setErr('')
     try {
-      setEnc(await rpc<Enc>('use_double_bubble', { p_encounter: enc.id }))
+      const next = await rpc<Enc & { saved?: boolean }>('use_double_bubble', { p_encounter: enc.id })
+      setEnc(next)
+      setNote(next.saved ? '🫧 Bubble Saver kept your Double Bubble!' : '')
       buzz([15, 30, 15])
       refresh()
       setPhase('ready')
@@ -176,6 +179,7 @@ export function Encounter({ initial, rewards, onDone }: { initial: Enc; rewards:
 
       <div className="flex-1" />
       {err && <p className="mb-3 text-center text-sm text-pink">{err}</p>}
+      {note && <p role="status" className="mb-3 text-center text-sm font-bold text-lime">{note}</p>}
 
       <div className="min-h-[132px]">
         {phase === 'ready' && <HoldButton onFire={throwBubble} />}

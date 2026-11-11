@@ -9,9 +9,9 @@ export const STREAK_DAY_XP = 100
 export const CATCH_XP: Record<Rarity, number> = { 1: 50, 2: 100, 3: 250, 4: 500 }
 
 // Derived from server-written stats (like achievements): can't be faked, no table to sync, and it never goes down.
-export function totalXp(p: Pick<Stats, 'total_reps' | 'best_streak'>, caught: Caught) {
+export function totalXp(p: Pick<Stats, 'total_reps' | 'best_streak'> & { bonus_xp?: number }, caught: Caught) {
   const catches = caught.reduce((sum, c) => sum + CATCH_XP[blipById(c.blip_id)?.rarity ?? 1] * c.times_caught, 0)
-  return p.total_reps * XP_PER_REP + p.best_streak * STREAK_DAY_XP + catches
+  return p.total_reps * XP_PER_REP + p.best_streak * STREAK_DAY_XP + catches + (p.bonus_xp ?? 0) // bonus_xp: server-granted loadout XP
 }
 
 /** Total XP needed to reach a level: L2 500, L3 1,500, L5 5,000, L10 22,500. */
