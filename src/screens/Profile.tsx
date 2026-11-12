@@ -276,7 +276,7 @@ export function Settings({ onBack, onEncounter }: { onBack: () => void; onEncoun
       {profile?.is_owner && <OwnerPanel onEncounter={onEncounter} />}
 
       <Button variant="ghost" className="w-full" onClick={signOut}>Sign out</Button>
-      <p className="text-center text-xs text-white/30">BlipUp v0.3 · Every rep sends a blip.</p>
+      <p className="text-center text-xs text-white/30">BlipUp v0.4 · Every rep sends a blip.</p>
     </div>
   )
 }
