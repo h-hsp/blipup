@@ -6,7 +6,7 @@ import { levelInfo, liveStreak, nextStreakReward, rankInfo, totalXp } from '../g
 import { BlipArt, Button, Stars, Stat } from '../components/ui'
 import { useStore } from '../lib/store'
 import { beep, buzz } from '../lib/fx'
-import { localDate } from '../lib/supabase'
+import { localDate, nameOf } from '../lib/supabase'
 
 const HYPE = [
   'Your Blips are waiting. Probably napping, but waiting.',
@@ -47,7 +47,7 @@ export function Home({ onStart }: { onStart: () => void }) {
       </AnimatePresence>
 
       <div>
-        <h1 className="font-display text-3xl font-extrabold">{greet}, {profile?.username ?? 'Blipper'}</h1>
+        <h1 className="font-display text-3xl font-extrabold">{greet}, {nameOf(profile)}</h1>
         <p className="mt-1 text-white/60">{hype}</p>
       </div>
 

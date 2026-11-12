@@ -13,8 +13,9 @@ import { Encounter } from './screens/Encounter'
 import { Dex } from './screens/Dex'
 import { Profile, Settings } from './screens/Profile'
 import { Perks } from './screens/Perks'
+import { Social } from './screens/Social'
 
-type Tab = 'home' | 'campaign' | 'dex' | 'perks' | 'me' | 'settings'
+type Tab = 'home' | 'campaign' | 'dex' | 'perks' | 'social' | 'me' | 'settings'
 type View = { name: Tab } | { name: 'session'; level?: Level } | { name: 'encounter'; enc: Enc; rewards: string[] }
 
 export default function App() {
@@ -50,12 +51,13 @@ function Shell() {
       {tab === 'campaign' && <Campaign onStart={(level) => setView({ name: 'session', level })} />}
       {tab === 'dex' && <Dex />}
       {tab === 'perks' && <Perks />}
+      {tab === 'social' && <Social />}
       {tab === 'me' && <Profile onSettings={() => setView({ name: 'settings' })} />}
       {tab === 'settings' && <Settings onBack={() => setView({ name: 'me' })} onEncounter={(enc) => setView({ name: 'encounter', enc, rewards: [] })} />}
 
       <nav className="fixed inset-x-0 bottom-0 z-30 mx-auto max-w-md px-5 pb-[max(1rem,env(safe-area-inset-bottom))]">
         <div className="card flex rounded-[26px] p-1.5 [--edge:#0a0820]">
-          {([['home', 'Home', HomeIcon], ['campaign', 'Campaign', FlagIcon], ['dex', 'Blipdex', DexIcon], ['perks', 'Perks', PerksIcon], ['me', 'Me', MeIcon]] as const).map(([id, label, Icon]) => {
+          {([['home', 'Home', HomeIcon], ['campaign', 'Campaign', FlagIcon], ['dex', 'Blipdex', DexIcon], ['perks', 'Perks', PerksIcon], ['social', 'Social', SocialIcon], ['me', 'Me', MeIcon]] as const).map(([id, label, Icon]) => {
             const active = tab === id || (id === 'me' && tab === 'settings')
             return (
               <button key={id} onClick={() => setView({ name: id })} aria-current={active ? 'page' : undefined}
@@ -94,4 +96,5 @@ const HomeIcon = () => <svg {...svg}><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 
 const FlagIcon = () => <svg {...svg}><path d="M5 21V4" /><path d="M5 4h13l-3 4.5 3 4.5H5" /></svg>
 const DexIcon = () => <svg {...svg}><rect x="3" y="3" width="7" height="7" rx="2" /><rect x="14" y="3" width="7" height="7" rx="2" /><rect x="3" y="14" width="7" height="7" rx="2" /><rect x="14" y="14" width="7" height="7" rx="2" /></svg>
 const PerksIcon = () => <svg {...svg}><path d="M13 2 4 14h7l-1 8 9-12h-7z" /></svg>
-const MeIcon = () => <svg {...svg}><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4 4-6 8-6s8 2 8 6" /></svg>
+const SocialIcon = () => <svg {...svg}><circle cx="9" cy="8" r="3.5" /><path d="M2.5 20c0-3.5 3-5.5 6.5-5.5s6.5 2 6.5 5.5" /><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14.5c2 .6 3.5 2.4 3.5 5.5" /></svg>
+const MeIcon =() => <svg {...svg}><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4 4-6 8-6s8 2 8 6" /></svg>

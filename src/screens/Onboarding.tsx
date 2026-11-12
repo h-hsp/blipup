@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { Button } from '../components/ui'
-import { supabase } from '../lib/supabase'
+import { account, supabase } from '../lib/supabase'
 
 const SLIDES = [
   { art: '/art/onboard-1.webp', title: 'Every rep sends a blip', body: 'Pick a pushup target. Each rep sends out a ripple that lures in a Blip.' },
@@ -12,15 +12,29 @@ const SLIDES = [
 export function Onboarding() {
   const [step, setStep] = useState(-1) // -1 = splash, SLIDES.length = sign in
   const [email, setEmail] = useState('')
-  const [mode, setMode] = useState<'choose' | 'email'>('choose')
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [mode, setMode] = useState<'choose' | 'signup' | 'login' | 'email'>('choose')
   const [msg, setMsg] = useState('')
   const [busy, setBusy] = useState(false)
+  const go = (m: typeof mode) => { setMode(m); setMsg('') }
 
   async function playNow() {
     setBusy(true)
     const { error } = await supabase.auth.signInAnonymously()
-    if (error) setMsg(`${error.message}. Try signing in with email instead.`)
+    if (error) setMsg(`${error.message}. Try making an account instead.`)
     setBusy(false)
+  }
+
+  async function submitAccount(e: React.FormEvent) {
+    e.preventDefault()
+    setBusy(true)
+    try {
+      await account(mode === 'signup' ? 'signup' : 'login', username, password)
+    } catch (err) {
+      setMsg((err as Error).message)
+      setBusy(false)
+    }
   }
 
   async function sendLink(e: React.FormEvent) {
@@ -69,18 +83,32 @@ export function Onboarding() {
             <>
               <div className="grid flex-1 place-items-center"><img src="/blips/blub.webp" alt="Blub, waving hello" className="idle-bounce h-56 w-56 object-contain" /></div>
               <h1 className="font-display text-4xl font-extrabold">Ready to blip?</h1>
-              <p className="mt-3 text-white/70">Jump straight in as a guest. You can save your progress with an email any time.</p>
-              {mode === 'choose' ? (
+              <p className="mt-3 text-white/70">Pick a username and password. No email needed. Or jump straight in as a guest and save later.</p>
+              {mode === 'choose' && (
                 <div className="mt-8 space-y-3">
-                  <Button className="w-full" disabled={busy} onClick={playNow}>{busy ? 'Summoning Blips…' : 'Play now'}</Button>
-                  <Button variant="ghost" className="w-full" onClick={() => { setMode('email'); setMsg('') }}>I have an account</Button>
+                  <Button className="w-full" onClick={() => go('signup')}>Create account</Button>
+                  <Button variant="ghost" className="w-full" onClick={() => go('login')}>I have an account</Button>
+                  <button className="w-full py-2 text-sm font-bold text-white/60" disabled={busy} onClick={playNow}>{busy ? 'Summoning Blips…' : 'Play as a guest'}</button>
                 </div>
-              ) : (
+              )}
+              {(mode === 'signup' || mode === 'login') && (
+                <form onSubmit={submitAccount} className="mt-8 space-y-3">
+                  <input required value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" aria-label="Username"
+                    autoComplete="username" autoCapitalize="none" spellCheck={false} maxLength={20} className="field w-full px-5 py-4 text-base" />
+                  <input required type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" aria-label="Password"
+                    autoComplete={mode === 'signup' ? 'new-password' : 'current-password'} minLength={mode === 'signup' ? 8 : undefined} className="field w-full px-5 py-4 text-base" />
+                  {mode === 'signup' && <p className="text-xs text-white/50">3-20 letters, numbers, _ or . and only you can have it. Password: 8+ characters. Without an email we can't reset a forgotten password.</p>}
+                  <Button className="w-full" disabled={busy}>{busy ? 'One sec…' : mode === 'signup' ? 'Create account' : 'Log in'}</Button>
+                  {mode === 'login' && <button type="button" className="w-full py-1 text-sm text-white/60" onClick={() => go('email')}>Signed up with email? Get a login link</button>}
+                  <button type="button" className="w-full py-1 text-sm text-white/60" onClick={() => go('choose')}>Back</button>
+                </form>
+              )}
+              {mode === 'email' && (
                 <form onSubmit={sendLink} className="mt-8 space-y-3">
                   <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@email.com" autoComplete="email" aria-label="Email"
                     className="field w-full px-5 py-4 text-base" />
                   <Button className="w-full" disabled={busy}>Email me a magic link</Button>
-                  <button type="button" className="w-full py-2 text-sm text-white/60" onClick={() => { setMode('choose'); setMsg('') }}>Back</button>
+                  <button type="button" className="w-full py-2 text-sm text-white/60" onClick={() => go('login')}>Back</button>
                 </form>
               )}
               {msg && <p className="mt-3 text-center text-sm text-white/75" role="status">{msg}</p>}

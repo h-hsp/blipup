@@ -6,7 +6,7 @@ import { levelInfo, liveStreak, rankInfo, RANKS, totalXp } from '../game/progres
 import { BlipArt, Button, Stat } from '../components/ui'
 import { useStore } from '../lib/store'
 import { pref, setPref } from '../lib/fx'
-import { localDate, rpc, supabase, type Encounter } from '../lib/supabase'
+import { account, localDate, nameOf, rpc, supabase, type Encounter } from '../lib/supabase'
 
 export function Profile({ onSettings }: { onSettings: () => void }) {
   const { user, profile, caught, sessions } = useStore()
@@ -21,8 +21,8 @@ export function Profile({ onSettings }: { onSettings: () => void }) {
       <header className="flex items-center gap-4">
         <div className="rounded-3xl bg-ink-3 shadow-[inset_0_1.5px_0_#ffffff26,0_4px_0_var(--color-edge)]"><BlipArt blip={avatar} size={76} locked={!caught[0]} idle={false} burst={false} /></div>
         <div className="min-w-0 flex-1">
-          <h1 className="truncate font-display text-3xl font-extrabold">{profile?.username ?? 'Blipper'}</h1>
-          <p className="truncate text-sm text-white/55">{user?.is_anonymous ? 'Guest player' : user?.email}</p>
+          <h1 className="truncate font-display text-3xl font-extrabold">{nameOf(profile)}</h1>
+          <p className="truncate text-sm text-white/55">@{profile?.username ?? '…'}{user?.is_anonymous && ' · guest'}</p>
         </div>
         <button onClick={onSettings} aria-label="Settings" className="press grid h-11 w-11 place-items-center rounded-2xl bg-ink-3 text-xl shadow-[0_3px_0_var(--color-edge)]">⚙︎</button>
       </header>
@@ -116,49 +116,106 @@ function RankCard({ reps }: { reps: number }) {
   )
 }
 
+/** Guests lock in their Blips with a username + password (or, optionally, an email link). */
 function SaveProgress() {
+  const { refresh } = useStore()
+  const [withEmail, setWithEmail] = useState(false)
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
   const [email, setEmail] = useState('')
   const [msg, setMsg] = useState('')
   const [busy, setBusy] = useState(false)
   async function save(e: React.FormEvent) {
     e.preventDefault()
     setBusy(true)
-    const { error } = await supabase.auth.updateUser({ email }, { emailRedirectTo: location.origin })
-    setMsg(error ? error.message : 'Check your inbox and tap the link to lock in your account.')
+    if (withEmail) {
+      const { error } = await supabase.auth.updateUser({ email }, { emailRedirectTo: location.origin })
+      setMsg(error ? error.message : 'Check your inbox and tap the link to lock in your account.')
+    } else {
+      try {
+        await account('signup', username, password)
+        await refresh()
+      } catch (err) {
+        setMsg((err as Error).message)
+      }
+    }
     setBusy(false)
   }
+  const field = 'field w-full px-4 py-3 text-base'
   return (
-    <form onSubmit={save} className="card card-glow p-5 [--edge:#7a2a55] [--glow:#ff6fb5]">
+    <form onSubmit={save} className="card card-glow space-y-2 p-5 [--edge:#7a2a55] [--glow:#ff6fb5]">
       <div className="font-display text-lg font-extrabold">Save your progress</div>
-      <p className="text-sm text-white/65">You're playing as a guest. Add an email so you never lose your Blips.</p>
+      <p className="text-sm text-white/65">You're playing as a guest. Pick a username and password so you never lose your Blips.</p>
+      {withEmail ? (
+        <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@email.com" autoComplete="email" aria-label="Email" className={field} />
+      ) : (
+        <>
+          <input required value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" aria-label="Username"
+            autoComplete="username" autoCapitalize="none" spellCheck={false} maxLength={20} className={field} />
+          <input required type="password" minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password (8+ characters)" aria-label="Password"
+            autoComplete="new-password" className={field} />
+        </>
+      )}
+      <button disabled={busy} className="press w-full rounded-2xl bg-pink py-3 font-extrabold text-ink shadow-[0_3px_0_#c23d80]">{busy ? 'Saving…' : 'Save'}</button>
+      <button type="button" className="w-full py-1 text-sm text-white/60" onClick={() => { setWithEmail(!withEmail); setMsg('') }}>
+        {withEmail ? 'Use a username and password' : 'Use an email instead'}
+      </button>
+      {msg && <p className="text-sm text-white/75" role="status">{msg}</p>}
+    </form>
+  )
+}
+
+/** One-line text setting with a Save button. */
+function SettingField({ id, label, hint, initial, type = 'text', save }: {
+  id: string; label: string; hint: string; initial: string; type?: string
+  /** returns the message to show, and optionally what the box should hold afterwards */
+  save: (v: string) => Promise<string | [string, string]>
+}) {
+  const [value, setValue] = useState(initial)
+  const [msg, setMsg] = useState('')
+  async function submit(e: React.FormEvent) {
+    e.preventDefault()
+    try {
+      const r = await save(value)
+      if (Array.isArray(r)) { setMsg(r[0]); setValue(r[1]) } else setMsg(r)
+    } catch (err) { setMsg((err as Error).message) }
+  }
+  return (
+    <form onSubmit={submit} className="card p-5">
+      <label htmlFor={id} className="font-display text-lg font-extrabold">{label}</label>
+      <p className="text-sm text-white/50">{hint}</p>
       <div className="mt-3 flex gap-2">
-        <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@email.com" autoComplete="email"
+        <input id={id} type={type} value={value} maxLength={type === 'password' ? 72 : 20} autoCapitalize="none" spellCheck={false}
+          autoComplete={type === 'password' ? 'new-password' : 'off'} onChange={(e) => { setValue(e.target.value); setMsg('') }}
           className="field min-w-0 flex-1 px-4 py-3 text-base" />
-        <button disabled={busy} className="press rounded-2xl bg-pink px-5 font-extrabold text-ink shadow-[0_3px_0_#c23d80]">Save</button>
+        <button className="press rounded-2xl bg-lime px-5 font-extrabold text-ink shadow-[0_3px_0_#7fb01a]">Save</button>
       </div>
-      {msg && <p className="mt-2 text-sm text-white/75" role="status">{msg}</p>}
+      {msg && <p className="mt-2 text-sm text-white/70" role="status">{msg}</p>}
     </form>
   )
 }
 
 export function Settings({ onBack, onEncounter }: { onBack: () => void; onEncounter: (e: Encounter) => void }) {
   const { user, profile, refresh } = useStore()
-  const [name, setName] = useState(profile?.username ?? '')
-  const [saved, setSaved] = useState('')
   const [, force] = useState(0)
 
-  async function saveName(e: React.FormEvent) {
-    e.preventDefault()
-    if (!user) return
-    // The server decides: a normal rename, or (owner code) owner mode without renaming.
-    try {
-      const r = await rpc<{ owner: boolean }>('set_username', { p_name: name })
-      if (r.owner) setName(profile?.username ?? '')
-      setSaved(r.owner ? '👑 Owner mode on. Every Blip unlocked.' : 'Saved ✓')
-    } catch (err) {
-      setSaved((err as Error).message)
-    }
-    refresh()
+  async function saveDisplayName(v: string) {
+    await rpc('set_display_name', { p_name: v })
+    await refresh()
+    return 'Saved ✓'
+  }
+  async function saveUsername(v: string) {
+    // The server decides: a rename (unique), or (owner code) owner mode without renaming.
+    const r = await rpc<{ owner: boolean }>('set_username', { p_name: v })
+    await refresh()
+    // never leave the owner code sitting in the box
+    return r.owner ? ['👑 Owner mode on. Every Blip unlocked.', profile?.username ?? ''] as [string, string] : 'Saved ✓'
+  }
+  async function savePassword(v: string) {
+    if (v.length < 8) throw new Error('Passwords need 8 or more characters')
+    const { error } = await supabase.auth.updateUser({ password: v })
+    if (error) throw new Error(error.message)
+    return ['Password saved ✓ Log in with your username and this password.', ''] as [string, string]
   }
 
   function toggle(key: string, on: boolean) {
@@ -179,15 +236,16 @@ export function Settings({ onBack, onEncounter }: { onBack: () => void; onEncoun
         <h1 className="font-display text-3xl font-extrabold">Settings</h1>
       </header>
 
-      <form onSubmit={saveName} className="card p-5">
-        <label htmlFor="name" className="font-display text-lg font-extrabold">Username</label>
-        <div className="mt-3 flex gap-2">
-          <input id="name" value={name} maxLength={20} required onChange={(e) => { setName(e.target.value); setSaved('') }}
-            className="field min-w-0 flex-1 px-4 py-3 text-base" />
-          <button className="press rounded-2xl bg-lime px-5 font-extrabold text-ink shadow-[0_3px_0_#7fb01a]">Save</button>
-        </div>
-        {saved && <p className="mt-2 text-sm text-white/70" role="status">{saved}</p>}
-      </form>
+      {profile && <>
+        <SettingField id="display" label="Display name" hint="What everyone sees. Change it whenever; anyone can use the same one. Leave empty to show your username."
+          initial={profile.display_name ?? ''} save={saveDisplayName} />
+        <SettingField id="username" label="Username" hint="Only you can have it. You log in with it and friends add you by it."
+          initial={profile.username} save={saveUsername} />
+      </>}
+      {user && !user.is_anonymous && (
+        <SettingField id="password" type="password" label="Password" hint="Set or change the password you log in with."
+          initial="" save={savePassword} />
+      )}
 
       <ul className="card divide-y divide-white/8">
         {[
@@ -214,7 +272,7 @@ export function Settings({ onBack, onEncounter }: { onBack: () => void; onEncoun
       {profile?.is_owner && <OwnerPanel onEncounter={onEncounter} />}
 
       <Button variant="ghost" className="w-full" onClick={signOut}>Sign out</Button>
-      <p className="text-center text-xs text-white/30">BlipUp v0.2 · Every rep sends a blip.</p>
+      <p className="text-center text-xs text-white/30">BlipUp v0.3 · Every rep sends a blip.</p>
     </div>
   )
 }
