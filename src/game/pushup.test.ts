@@ -55,6 +55,24 @@ test('moving the hands instead of the body is not a pushup', () => {
   assert.ok(cues.has(CUE.hands))
 })
 
+// Same frames, but with a clock: `ms` between frames.
+const timed = (s: State, frames: Pt[][], ms: number, t0 = 0) => frames.reduce((st, f, i) => step(st, f, 1, t0 + i * ms), s)
+
+test('pushups at a normal pace count with real frame times', () => {
+  const s = timed(ready(), [...rep(0.74), ...rep(0.74)], 33) // 30 fps: each rep takes about 1.3 s
+  assert.equal(s.reps, 2)
+})
+
+test('bouncing faster than a real pushup is not counted', () => {
+  // reaches the bottom, but the whole rep takes about 0.3 s
+  const quick = [...ramp(TOP, 0.74, 3).map((y) => frame(y)), ...hold(0.74, 3), ...ramp(0.74, TOP, 3).map((y) => frame(y)), ...hold(TOP, 3)]
+  const s = timed(ready(), quick, 33)
+  assert.equal(s.reps, 0)
+  assert.equal(s.cue, CUE.slow)
+  // and a proper rep straight after still counts
+  assert.equal(timed(s, rep(0.74), 33, 1000).reps, 1)
+})
+
 test('a few dropped frames keep the count, a long dropout pauses the set', () => {
   const one = run(ready(), rep(0.74))
   const blip = run(one, Array.from({ length: 5 }, () => undefined as unknown as Pt[]))

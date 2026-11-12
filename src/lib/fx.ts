@@ -30,6 +30,17 @@ export function beep(freq = 660, dur = 0.09) {
   } catch { /* audio blocked */ }
 }
 
+/** Speak a short line (rep counts, form tips) so you don't have to read the screen mid-pushup. Follows the Sound setting. */
+export function say(text: string) {
+  if (!pref('sound') || !('speechSynthesis' in window)) return
+  try {
+    speechSynthesis.cancel() // never queue up: only the latest count matters
+    const u = new SpeechSynthesisUtterance(text)
+    u.rate = 1.15
+    speechSynthesis.speak(u)
+  } catch { /* speech blocked */ }
+}
+
 export const buzz = (pattern: number | number[] = 12) => {
   if (pref('haptics')) navigator.vibrate?.(pattern)
 }

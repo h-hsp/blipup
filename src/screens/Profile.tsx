@@ -253,7 +253,7 @@ export function Settings({ onBack, onEncounter }: { onBack: () => void; onEncoun
 
       <ul className="card divide-y divide-white/8">
         {[
-          { key: 'sound', label: 'Sound effects', hint: 'Blips, boops and bubble pops', def: true },
+          { key: 'sound', label: 'Sound effects', hint: 'Blips, boops, bubble pops and spoken rep counts', def: true },
           { key: 'haptics', label: 'Haptics', hint: 'Buzz on every rep (Android)', def: true },
           { key: 'reminders', label: 'Daily reminder', hint: "We'll nudge you once reminders launch", def: false },
         ].map((t) => {

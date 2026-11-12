@@ -1,9 +1,18 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { BAR_MAX, CUE, DOWN, START, UP, step, type Pt, type State } from '../game/pushup'
+import { say } from '../lib/fx'
 
 // shortcut: wasm + model come from CDNs, self-host them in /public if offline use or CSP matters
 const WASM = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.2.2/wasm'
-const MODEL = 'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task'
+const MODEL_URL = (m: string) => `https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_${m}/float16/1/pose_landmarker_${m}.task`
+// GPU phones/laptops get the sharper "full" model; CPU-only falls back to the faster "lite" one.
+const MODELS = { GPU: MODEL_URL('full'), CPU: MODEL_URL('lite') }
+
+// Form tips worth saying out loud (you're looking at the floor). Rep counts are spoken by the session.
+const SPOKEN: Record<string, string> = {
+  [CUE.go]: 'Ready. Go!', [CUE.lower]: 'Go lower', [CUE.hands]: 'Keep your hands planted', [CUE.level]: 'Keep your shoulders level',
+  [CUE.slow]: 'Slow down', [CUE.frame]: 'Get your shoulders and hands in the camera', [CUE.flat]: 'Get into a pushup',
+}
 
 const BONES = [[11, 12], [11, 13], [13, 15], [12, 14], [14, 16], [11, 23], [12, 24], [23, 24]]
 const JOINTS = [11, 12, 13, 14, 15, 16, 23, 24]
@@ -28,6 +37,13 @@ export function PushupCam({ onRep, onError, children }: { onRep: () => void; onE
     let s = START
     let lastT = -1
     let stage = 'camera'
+    let spoken = { text: '', at: 0 }
+    // Keep the screen awake: a phone that dims mid-set stops the camera. Re-taken when you come back to the tab.
+    let lock: { release: () => Promise<void> } | undefined
+    const wake = () => {
+      if (document.visibilityState === 'visible') navigator.wakeLock?.request('screen').then((l) => { if (stop) l.release(); else lock = l }).catch(() => {})
+    }
+    document.addEventListener('visibilitychange', wake)
 
     ;(async () => {
       try {
@@ -37,7 +53,7 @@ export function PushupCam({ onRep, onError, children }: { onRep: () => void; onE
         // for a moment (Windows reports NotReadableError). Also helps when another app just let go of it.
         for (let tries = 3; ; tries--) {
           try {
-            stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } }, audio: false })
+            stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 }, frameRate: { ideal: 30 } }, audio: false })
             break
           } catch (e) {
             if ((e as Error).name !== 'NotReadableError' || tries <= 1 || stop) throw e
@@ -48,12 +64,13 @@ export function PushupCam({ onRep, onError, children }: { onRep: () => void; onE
         const v = video.current!
         v.srcObject = stream
         await v.play()
+        wake()
 
         stage = 'model'
         const { FilesetResolver, PoseLandmarker } = await import('@mediapipe/tasks-vision')
         const fileset = await FilesetResolver.forVisionTasks(WASM)
         const make = (delegate: 'GPU' | 'CPU') =>
-          PoseLandmarker.createFromOptions(fileset, { baseOptions: { modelAssetPath: MODEL, delegate }, runningMode: 'VIDEO', numPoses: 1 })
+          PoseLandmarker.createFromOptions(fileset, { baseOptions: { modelAssetPath: MODELS[delegate], delegate }, runningMode: 'VIDEO', numPoses: 1 })
         const pose = await make('GPU').catch(() => make('CPU'))
         close = () => pose.close()
         if (stop) return close()
@@ -65,11 +82,18 @@ export function PushupCam({ onRep, onError, children }: { onRep: () => void; onE
           const c = canvas.current
           if (!c || !v.videoWidth || v.currentTime === lastT) return
           lastT = v.currentTime
-          const pts = pose.detectForVideo(v, performance.now()).landmarks[0] as Pt[] | undefined
+          const now = performance.now()
+          const pts = pose.detectForVideo(v, now).landmarks[0] as Pt[] | undefined
           const before = s
-          s = step(s, pts, v.videoWidth / v.videoHeight)
+          s = step(s, pts, v.videoWidth / v.videoHeight, now)
           if (s.reps > before.reps) cb.current.onRep()
           if (s.cue !== before.cue || s.phase !== before.phase) setUi({ ready: true, cue: s.cue, phase: s.phase })
+          // say a tip when it changes, or repeat it if it's still the problem 4 s later
+          const line = SPOKEN[s.cue]
+          if (line && s.cue !== before.cue && (line !== spoken.text || now - spoken.at > 4000)) {
+            say(line)
+            spoken = { text: line, at: now }
+          }
 
           // Lime inside a target zone (top or bottom), sky while travelling between them.
           const color = s.phase !== 'out' && (s.depth <= UP || s.depth >= DOWN) ? LIME : SKY
@@ -99,6 +123,8 @@ export function PushupCam({ onRep, onError, children }: { onRep: () => void; onE
       cancelAnimationFrame(raf)
       stream?.getTracks().forEach((t) => t.stop())
       close()
+      document.removeEventListener('visibilitychange', wake)
+      lock?.release().catch(() => {})
     }
   }, [])
 
