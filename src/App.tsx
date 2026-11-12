@@ -14,6 +14,7 @@ import { Dex } from './screens/Dex'
 import { Profile, Settings } from './screens/Profile'
 import { Perks } from './screens/Perks'
 import { Social } from './screens/Social'
+import { ProgressSheet, type ProgressKind } from './components/ProgressSheet'
 
 type Tab = 'home' | 'campaign' | 'dex' | 'perks' | 'social' | 'me' | 'settings'
 type View = { name: Tab } | { name: 'session'; level?: Level } | { name: 'encounter'; enc: Enc; rewards: string[] }
@@ -78,17 +79,20 @@ function TopBar({ bubbles }: { bubbles: boolean }) {
   const { profile, caught } = useStore()
   const { streak } = liveStreak(profile, localDate(), localDate(new Date(Date.now() - 864e5)))
   const { level } = levelInfo(profile ? totalXp(profile, caught) : 0)
-  const chip = 'rounded-xl px-3 py-1.5 font-display text-sm font-extrabold tabular-nums'
-  return (
+  const [info, setInfo] = useState<ProgressKind | null>(null)
+  const chip = 'press rounded-xl px-3 py-1.5 font-display text-sm font-extrabold tabular-nums'
+  // the sheet sits outside the header: backdrop-blur would trap a fixed sheet inside the bar
+  return (<>
+    <ProgressSheet kind={info} onClose={() => setInfo(null)} />
     <header className="sticky top-0 z-20 -mx-5 mb-5 flex items-center justify-between bg-ink/75 px-5 pb-3 pt-[max(1.25rem,env(safe-area-inset-top))] backdrop-blur-md">
       <span className="font-display text-2xl font-extrabold">Blip<span className="text-lime">Up</span></span>
       <div className="flex gap-2">
-        {bubbles && <span className={`${chip} bg-ink-3 shadow-[0_3px_0_var(--color-edge)]`} aria-label={`${profile?.double_bubbles ?? 0} Double Bubbles`}>🫧 {profile?.double_bubbles ?? 0}</span>}
-        <span className={`${chip} ${streak ? 'bg-sun text-ink shadow-[0_3px_0_#b8862a]' : 'bg-ink-3 text-white/60 shadow-[0_3px_0_var(--color-edge)]'}`} aria-label={`${streak} day streak`}>🔥 {streak}</span>
-        <span className={`${chip} bg-lime text-ink shadow-[0_3px_0_#7fb01a]`} aria-label={`Level ${level}`}>Lv {level}</span>
+        {bubbles && <button onClick={() => setInfo('bubbles')} className={`${chip} bg-ink-3 shadow-[0_3px_0_var(--color-edge)]`} aria-label={`${profile?.double_bubbles ?? 0} Double Bubbles`}>🫧 {profile?.double_bubbles ?? 0}</button>}
+        <button onClick={() => setInfo('streak')} className={`${chip} ${streak ? 'bg-sun text-ink shadow-[0_3px_0_#b8862a]' : 'bg-ink-3 text-white/60 shadow-[0_3px_0_var(--color-edge)]'}`} aria-label={`${streak} day streak`}>🔥 {streak}</button>
+        <button onClick={() => setInfo('level')} className={`${chip} bg-lime text-ink shadow-[0_3px_0_#7fb01a]`} aria-label={`Level ${level}`}>Lv {level}</button>
       </div>
     </header>
-  )
+  </>)
 }
 
 const svg = { width: 22, height: 22, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const, 'aria-hidden': true }

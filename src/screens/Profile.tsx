@@ -4,6 +4,7 @@ import { ACHIEVEMENTS } from '../game/achievements'
 import { LEVELS } from '../game/campaign'
 import { levelInfo, liveStreak, rankInfo, RANKS, totalXp } from '../game/progress'
 import { BlipArt, Button, Stat } from '../components/ui'
+import { ProgressSheet, type ProgressKind } from '../components/ProgressSheet'
 import { useStore } from '../lib/store'
 import { pref, setPref } from '../lib/fx'
 import { account, localDate, nameOf, rpc, supabase, type Encounter } from '../lib/supabase'
@@ -15,9 +16,11 @@ export function Profile({ onSettings }: { onSettings: () => void }) {
   const { streak } = liveStreak(profile, localDate(), localDate(new Date(Date.now() - 864e5)))
   const xp = profile ? totalXp(profile, caught) : 0
   const { level } = levelInfo(xp)
+  const [info, setInfo] = useState<ProgressKind | null>(null)
 
   return (
     <div className="space-y-6">
+      <ProgressSheet kind={info} onClose={() => setInfo(null)} />
       <header className="flex items-center gap-4">
         <div className="rounded-3xl bg-ink-3 shadow-[inset_0_1.5px_0_#ffffff26,0_4px_0_var(--color-edge)]"><BlipArt blip={avatar} size={76} locked={!caught[0]} idle={false} burst={false} /></div>
         <div className="min-w-0 flex-1">
@@ -27,19 +30,19 @@ export function Profile({ onSettings }: { onSettings: () => void }) {
         <button onClick={onSettings} aria-label="Settings" className="press grid h-11 w-11 place-items-center rounded-2xl bg-ink-3 text-xl shadow-[0_3px_0_var(--color-edge)]">⚙︎</button>
       </header>
 
-      <RankCard reps={profile?.total_reps ?? 0} />
+      <RankCard reps={profile?.total_reps ?? 0} onAll={() => setInfo('rank')} />
 
       {user?.is_anonymous && <SaveProgress />}
 
       <div className="grid grid-cols-2 gap-3">
-        <Stat label="Total pushups" value={profile?.total_reps ?? 0} tone="text-lime" />
+        <Stat label="Total pushups" value={profile?.total_reps ?? 0} tone="text-lime" onClick={() => setInfo('rank')} />
         <Stat label="Sessions" value={profile?.total_sessions ?? 0} tone="text-sky" />
         <Stat label="Blips collected" value={`${caught.length}/${BLIPS.length}`} tone="text-pink" />
-        <Stat label="Double Bubbles" value={`🫧 ${profile?.double_bubbles ?? 0}`} />
-        <Stat label="Level" value={`Lv ${level}`} tone="text-lime" />
-        <Stat label="Total XP" value={xp.toLocaleString()} tone="text-sun" />
-        <Stat label="Current streak" value={`🔥 ${streak}`} />
-        <Stat label="Best streak" value={profile?.best_streak ?? 0} tone="text-sun" />
+        <Stat label="Double Bubbles" value={`🫧 ${profile?.double_bubbles ?? 0}`} onClick={() => setInfo('bubbles')} />
+        <Stat label="Level" value={`Lv ${level}`} tone="text-lime" onClick={() => setInfo('level')} />
+        <Stat label="Total XP" value={xp.toLocaleString()} tone="text-sun" onClick={() => setInfo('level')} />
+        <Stat label="Current streak" value={`🔥 ${streak}`} onClick={() => setInfo('streak')} />
+        <Stat label="Best streak" value={profile?.best_streak ?? 0} tone="text-sun" onClick={() => setInfo('streak')} />
         <Stat label="Best session" value={profile?.best_session ?? 0} tone="text-sky" />
         <Stat label="Campaign" value={`${profile?.campaign_level ?? 0}/${LEVELS.length}`} tone="text-pink" />
       </div>
@@ -74,7 +77,7 @@ export function Profile({ onSettings }: { onSettings: () => void }) {
   )
 }
 
-function RankCard({ reps }: { reps: number }) {
+function RankCard({ reps, onAll }: { reps: number; onAll: () => void }) {
   const { i, rank, next, toNext, pct } = rankInfo(reps)
   const [sel, setSel] = useState<number | null>(null)
   const pick = sel === null ? null : RANKS[sel]
@@ -87,6 +90,7 @@ function RankCard({ reps }: { reps: number }) {
           <div className="font-display text-3xl font-extrabold leading-tight" style={{ color: rank.color }}>{rank.name}</div>
           <div className="text-sm text-white/55">{reps.toLocaleString()} pushups total</div>
         </div>
+        <button onClick={onAll} className="press shrink-0 self-start rounded-xl bg-ink-3 px-3 py-1.5 text-xs font-extrabold text-white/80 shadow-[0_3px_0_var(--color-edge)]">All ranks ›</button>
       </div>
       <div className="mt-4 h-3 overflow-hidden rounded-full bg-[#0d0b26] ring-1 ring-white/10" role="progressbar" aria-label={next ? `Progress to ${next.name}` : 'Top rank'}
         aria-valuenow={Math.round(pct * 100)} aria-valuemin={0} aria-valuemax={100}>

@@ -3,7 +3,8 @@ import { AnimatePresence, motion } from 'motion/react'
 import { BLIPS, blipById } from '../game/blips'
 import { DAILY_TARGET } from '../game/catch'
 import { levelInfo, liveStreak, nextStreakReward, rankInfo, totalXp } from '../game/progress'
-import { BlipArt, Button, Stars, Stat } from '../components/ui'
+import { BlipArt, Button, CardTap, Stars, Stat } from '../components/ui'
+import { ProgressSheet, type ProgressKind } from '../components/ProgressSheet'
 import { useStore } from '../lib/store'
 import { beep, buzz } from '../lib/fx'
 import { localDate, nameOf } from '../lib/supabase'
@@ -31,9 +32,11 @@ export function Home({ onStart }: { onStart: () => void }) {
   const hour = new Date().getHours()
   const greet = hour < 12 ? 'Morning' : hour < 18 ? 'Arvo' : 'Evening'
   const hype = HYPE[new Date().getDate() % HYPE.length]
+  const [info, setInfo] = useState<ProgressKind | null>(null)
 
   return (
     <div className="space-y-5">
+      <ProgressSheet kind={info} onClose={() => setInfo(null)} />
       <AnimatePresence>
         {celebrate && (
           <motion.button key="celebrate" onClick={dismiss} aria-live="polite"
@@ -52,10 +55,10 @@ export function Home({ onStart }: { onStart: () => void }) {
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <StreakHero streak={streak} doneToday={doneToday} best={profile?.best_streak ?? 0} pop={!!celebrate} />
+        <StreakHero streak={streak} doneToday={doneToday} best={profile?.best_streak ?? 0} pop={!!celebrate} onOpen={() => setInfo('streak')} />
         <div className="grid gap-3">
-          <RankMini reps={profile?.total_reps ?? 0} />
-          <LevelMini {...lvl} />
+          <RankMini reps={profile?.total_reps ?? 0} onOpen={() => setInfo('rank')} />
+          <LevelMini {...lvl} onOpen={() => setInfo('level')} />
         </div>
       </div>
       <Button className="w-full py-5 text-xl" onClick={onStart}>{doneToday || streak === 0 ? 'Start pushups ✨' : `Save your ${streak}-day streak 🔥`}</Button>
@@ -79,16 +82,16 @@ export function Home({ onStart }: { onStart: () => void }) {
       </section>
 
       <div className="grid grid-cols-2 gap-3">
-        <Stat label="Total pushups" value={profile?.total_reps ?? 0} tone="text-lime" />
+        <Stat label="Total pushups" value={profile?.total_reps ?? 0} tone="text-lime" onClick={() => setInfo('rank')} />
         <Stat label="Blips caught" value={`${caught.length}/${BLIPS.length}`} tone="text-pink" />
         <Stat label="Sessions" value={profile?.total_sessions ?? 0} tone="text-sky" />
-        <Stat label="Total XP" value={xp.toLocaleString()} tone="text-sun" />
+        <Stat label="Total XP" value={xp.toLocaleString()} tone="text-sun" onClick={() => setInfo('level')} />
       </div>
     </div>
   )
 }
 
-function StreakHero({ streak, doneToday, best, pop }: { streak: number; doneToday: boolean; best: number; pop: boolean }) {
+function StreakHero({ streak, doneToday, best, pop, onOpen }: { streak: number; doneToday: boolean; best: number; pop: boolean; onOpen: () => void }) {
   const alive = streak > 0
   const next = nextStreakReward(streak)
   const end = doneToday ? 0 : 1 // how many days ago the streak's latest day was
@@ -122,18 +125,19 @@ function StreakHero({ streak, doneToday, best, pop }: { streak: number; doneToda
       <div className="flex-1" />
       <p className={`mt-3 text-xs font-extrabold ${alive && !doneToday ? 'self-start rounded-lg bg-ink px-2 py-1 text-sun' : alive ? 'text-ink/80' : 'text-white/70'}`}>{status}</p>
       <p className={`mt-1 text-[11px] font-semibold ${alive ? 'text-ink/70' : 'text-white/50'}`}>🫧 +1 at day {next}</p>
+      <CardTap label="See streak rewards" onClick={onOpen} />
     </section>
   )
 }
 
-const MINI = 'card flex flex-col justify-center p-3.5'
+const MINI = 'card relative flex flex-col justify-center p-3.5'
 const miniBar = (pct: number, fill: string, label: string) => (
   <div className="mt-2 h-2 overflow-hidden rounded-full bg-[#0d0b26] ring-1 ring-white/10" role="progressbar" aria-label={label} aria-valuenow={Math.round(pct * 100)} aria-valuemin={0} aria-valuemax={100}>
     <div className="h-full origin-left rounded-full" style={{ transform: `scaleX(${pct})`, transition: 'transform 600ms var(--ease-out)', background: fill }} />
   </div>
 )
 
-function RankMini({ reps }: { reps: number }) {
+function RankMini({ reps, onOpen }: { reps: number; onOpen: () => void }) {
   const { rank, next, toNext, pct } = rankInfo(reps)
   return (
     <section aria-label={`Rank: ${rank.name}`} className={MINI}>
@@ -144,11 +148,12 @@ function RankMini({ reps }: { reps: number }) {
       </div>
       {miniBar(pct, rank.color, next ? `Progress to ${next.name}` : 'Top rank')}
       <div className="mt-1 truncate text-[11px] text-white/50">{next ? `${toNext.toLocaleString()} to ${next.icon} ${next.name}` : 'Top rank'}</div>
+      <CardTap label="See all ranks" onClick={onOpen} />
     </section>
   )
 }
 
-function LevelMini({ level, into, need, toNext }: { level: number; into: number; need: number; toNext: number }) {
+function LevelMini({ level, into, need, toNext, onOpen }: { level: number; into: number; need: number; toNext: number; onOpen: () => void }) {
   return (
     <section aria-label={`Level ${level}`} className={MINI}>
       <div className="label">Level</div>
@@ -158,6 +163,7 @@ function LevelMini({ level, into, need, toNext }: { level: number; into: number;
       </div>
       {miniBar(into / need, 'linear-gradient(90deg,#c6ff4d,#6fd3ff)', `Progress to level ${level + 1}`)}
       <div className="mt-1 truncate text-[11px] text-white/50">{toNext.toLocaleString()} XP to Lv {level + 1}</div>
+      <CardTap label="See all levels" onClick={onOpen} />
     </section>
   )
 }

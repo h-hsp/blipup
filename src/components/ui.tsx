@@ -61,11 +61,18 @@ export function Sheet({ open, onClose, children }: { open: boolean; onClose: () 
   )
 }
 
-export function Stat({ label, value, tone = '' }: { label: string; value: ReactNode; tone?: string }) {
-  return (
-    <div className="card p-4">
-      <div className={`font-display text-2xl font-extrabold tabular-nums ${tone}`}>{value}</div>
-      <div className="label mt-0.5">{label}</div>
-    </div>
-  )
+/** A stat tile; with onClick it becomes a button (shows a › hint). */
+export function Stat({ label, value, tone = '', onClick }: { label: string; value: ReactNode; tone?: string; onClick?: () => void }) {
+  const body = <>
+    <div className={`font-display text-2xl font-extrabold tabular-nums ${tone}`}>{value}</div>
+    <div className="label mt-0.5">{label}{onClick && <span aria-hidden> ›</span>}</div>
+  </>
+  return onClick
+    ? <button type="button" onClick={onClick} className="card press block w-full p-4 text-left">{body}</button>
+    : <div className="card p-4">{body}</div>
+}
+
+/** Invisible full-card button: lays over a card (which must be `relative`) so the whole card opens something. */
+export function CardTap({ label, onClick, className = 'rounded-[28px]' }: { label: string; onClick: () => void; className?: string }) {
+  return <button type="button" aria-label={label} onClick={onClick} className={`absolute inset-0 z-10 transition-colors duration-150 active:bg-white/5 ${className}`} />
 }
