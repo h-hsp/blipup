@@ -18,7 +18,7 @@ export function Campaign({ onStart }: { onStart: (level: Level) => void }) {
         <span className="font-display text-xl font-extrabold text-lime tabular-nums">{done}/{LEVELS.length}</span>
       </header>
       <div className="mt-3 h-4 overflow-hidden rounded-full bg-[#0d0b26] ring-1 ring-white/10" role="progressbar" aria-label="Campaign progress" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}>
-        <div className="h-full rounded-full bg-gradient-to-r from-lime to-sky transition-[width] duration-500" style={{ width: `${pct}%` }} />
+        <div className="h-full rounded-full bg-linear-to-r/oklch from-lime to-sky transition-[width] duration-500" style={{ width: `${pct}%` }} />
       </div>
       <p className="mt-3 text-sm text-white/55">Clear the levels in order. Each one has its own pushup target, and every 5th is a boss worth a Double Bubble.</p>
 

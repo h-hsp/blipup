@@ -95,7 +95,7 @@ export function Social() {
 
 function BoardRow({ r }: { r: Row }) {
   return (
-    <li className={`flex items-center gap-3 rounded-2xl px-3 py-2.5 ${r.me ? 'bg-lime/15 ring-1 ring-lime/50' : 'bg-white/5'}`}>
+    <li className={`flex items-center gap-3 nest px-3 py-2.5 ${r.me ? 'bg-lime/15 ring-1 ring-lime/50' : 'bg-white/5'}`}>
       <span className="w-8 text-center font-display text-lg font-extrabold tabular-nums">{MEDAL[r.rank - 1] ?? r.rank}</span>
       <span className="min-w-0 flex-1">
         <span className="block truncate font-bold">{r.name}{r.me && r.username && <span className="text-lime"> (you)</span>}</span>
@@ -113,7 +113,7 @@ function List({ title, people, actions, empty }: { title: string; people: Person
       {!people.length && empty && <p className="mt-2 text-sm text-white/50">{empty}</p>}
       <ul className="mt-2 space-y-1.5">
         {people.map((p) => (
-          <li key={p.id} className="flex items-center gap-3 rounded-2xl bg-white/5 px-3 py-2.5">
+          <li key={p.id} className="flex items-center gap-3 nest bg-white/5 px-3 py-2.5">
             <span className="min-w-0 flex-1">
               <span className="block truncate font-bold">{p.name}</span>
               <span className="block truncate text-xs text-white/45">@{p.username}</span>

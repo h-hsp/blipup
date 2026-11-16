@@ -40,9 +40,9 @@ export function Home({ onStart }: { onStart: () => void }) {
       <AnimatePresence>
         {celebrate && (
           <motion.button key="celebrate" onClick={dismiss} aria-live="polite"
-            initial={{ opacity: 0, scale: 0.9, y: -8 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.96 }}
-            transition={{ type: 'spring', duration: 0.5, bounce: 0.35 }}
-            className="block w-full rounded-[28px] bg-gradient-to-r from-lime to-sun p-4 text-left text-ink shadow-[inset_0_1.5px_0_#ffffff80,0_5px_0_#8fa01f]">
+            initial={{ opacity: 0, scale: 0.9, y: -8, filter: 'blur(4px)' }} animate={{ opacity: 1, scale: 1, y: 0, filter: 'blur(0px)' }} exit={{ opacity: 0, scale: 0.96, filter: 'blur(4px)' }}
+            transition={{ type: 'spring', duration: 0.5, bounce: 0.35, filter: { duration: 0.25 } }}
+            className="block w-full rounded-[28px] bg-linear-to-r/oklch from-lime to-sun p-4 text-left text-ink shadow-[inset_0_1.5px_0_#ffffff80,0_5px_0_#8fa01f]">
             <div className="font-display text-2xl font-extrabold">{celebrate[0]}</div>
             {celebrate.length > 1 && <div className="font-bold">{celebrate.slice(1).join('  ·  ')}</div>}
           </motion.button>
@@ -104,7 +104,7 @@ function StreakHero({ streak, doneToday, best, pop, onOpen }: { streak: number; 
 
   return (
     <section aria-label={`${streak} day streak, best ${best}`}
-      className={`relative flex flex-col p-4 ${alive ? 'rounded-[28px] bg-[linear-gradient(160deg,#ffb52e,#ff7a3d_55%,#ff5d8f)] text-ink shadow-[inset_0_1.5px_0_#ffffff80,0_5px_0_#b8431f]' : 'card'}`}>
+      className={`relative flex flex-col p-4 ${alive ? 'rounded-[28px] bg-[linear-gradient(160deg_in_oklch,#ffb52e,#ff7a3d_55%,#ff5d8f)] text-ink shadow-[inset_0_1.5px_0_#ffffff80,0_5px_0_#b8431f]' : 'card'}`}>
       <div className="flex items-start justify-between">
         <span className={`text-4xl ${alive ? 'flame' : 'opacity-40 grayscale'}`} aria-hidden>🔥</span>
         <div className={`text-right text-[11px] font-bold ${alive ? 'text-ink/70' : 'text-white/55'}`}>Best<div className={`font-display text-lg font-extrabold leading-none ${alive ? 'text-ink' : 'text-white'}`}>{best}</div></div>
@@ -161,7 +161,7 @@ function LevelMini({ level, into, need, toNext, onOpen }: { level: number; into:
         <span className="grid h-7 min-w-7 place-items-center rounded-lg bg-lime px-1 font-display text-base font-extrabold text-ink shadow-[0_2px_0_#7fb01a]">{level}</span>
         <span className="font-display text-lg font-extrabold">Level {level}</span>
       </div>
-      {miniBar(into / need, 'linear-gradient(90deg,#c6ff4d,#6fd3ff)', `Progress to level ${level + 1}`)}
+      {miniBar(into / need, 'linear-gradient(90deg in oklch,#c6ff4d,#6fd3ff)', `Progress to level ${level + 1}`)}
       <div className="mt-1 truncate text-[11px] text-white/50">{toNext.toLocaleString()} XP to Lv {level + 1}</div>
       <CardTap label="See all levels" onClick={onOpen} />
     </section>

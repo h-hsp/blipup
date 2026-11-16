@@ -107,7 +107,7 @@ function RankCard({ reps, onAll }: { reps: number; onAll: () => void }) {
         ))}
       </ol>
       {pick && (
-        <div role="status" className="mt-3 flex items-center gap-3 rounded-2xl bg-ink/60 px-3 py-2.5 ring-1 ring-white/10">
+        <div role="status" className="mt-3 flex items-center gap-3 nest bg-ink/60 px-3 py-2.5 ring-1 ring-white/10">
           <span className="text-2xl" aria-hidden>{pick.icon}</span>
           <div className="min-w-0 flex-1">
             <div className="font-display font-extrabold" style={{ color: pick.color }}>{pick.name}</div>

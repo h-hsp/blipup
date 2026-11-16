@@ -104,7 +104,7 @@ export function Encounter({ initial, rewards, onDone }: { initial: Enc; rewards:
     <div className="relative mx-auto flex min-h-dvh max-w-md flex-col overflow-hidden px-5 pb-8 pt-[max(1.25rem,env(safe-area-inset-top))]">
       <AnimatePresence>
         {toast && (
-          <motion.div initial={{ y: -80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -80, opacity: 0, transition: { duration: 0.2 } }} transition={{ type: 'spring', duration: 0.5, bounce: 0.25 }}
+          <motion.div initial={{ y: -80, opacity: 0, filter: 'blur(4px)' }} animate={{ y: 0, opacity: 1, filter: 'blur(0px)' }} exit={{ y: -80, opacity: 0, filter: 'blur(4px)', transition: { duration: 0.2 } }} transition={{ type: 'spring', duration: 0.5, bounce: 0.25, filter: { duration: 0.25 } }}
             className="absolute inset-x-5 top-[max(1rem,env(safe-area-inset-top))] z-30 rounded-3xl bg-sun px-5 py-3 text-ink shadow-[inset_0_1.5px_0_#ffffff80,0_5px_0_#b8862a]" role="status">
             <div className="font-display text-lg font-extrabold">+{rewards.length} Double Bubble{rewards.length > 1 ? 's' : ''} 🫧</div>
             <div className="text-sm font-medium">{rewards.map(rewardText).join(' · ')}</div>
@@ -133,7 +133,7 @@ export function Encounter({ initial, rewards, onDone }: { initial: Enc; rewards:
         {(phase === 'throwing' || phase === 'caught' || phase === 'missed') && (
           <motion.div key={`bubble-${throws}`} aria-hidden
             className="absolute h-36 w-36 rounded-full"
-            style={{ background: 'radial-gradient(circle at 30% 28%, #ffffffcc 0 8%, #ffffff22 22%, #6fd3ff33 60%, #ff6fb555 100%)', boxShadow: 'inset 0 0 0 3px #ffffffaa, 0 0 40px #6fd3ff66' }}
+            style={{ background: 'radial-gradient(circle at 30% 28% in oklch, #ffffffcc 0 8%, #ffffff22 22%, #6fd3ff33 60%, #ff6fb555 100%)', boxShadow: 'inset 0 0 0 3px #ffffffaa, 0 0 40px #6fd3ff66' }}
             initial={{ y: 320, scale: 0.4, opacity: 0, rotate: 0 }}
             animate={
               phase === 'throwing'
@@ -153,7 +153,7 @@ export function Encounter({ initial, rewards, onDone }: { initial: Enc; rewards:
       </div>
 
       {/* Identity */}
-      <motion.div key={`id-${enc.id}`} className="mt-2 text-center" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: reduce ? 0 : 1.5, duration: 0.3, ease: OUT }}>
+      <motion.div key={`id-${enc.id}`} className="mt-2 text-center" initial={{ opacity: 0, y: 10, filter: 'blur(4px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} transition={{ delay: reduce ? 0 : 1.5, duration: 0.3, ease: OUT }}>
         <div className="flex items-center justify-center gap-2">
           <h1 className="font-display text-4xl font-extrabold">{blip.name}</h1>
           {isNew && <span className="rounded-lg bg-pink px-2 py-0.5 text-xs font-extrabold text-ink shadow-[0_2px_0_#c23d80]">NEW</span>}
@@ -186,7 +186,7 @@ export function Encounter({ initial, rewards, onDone }: { initial: Enc; rewards:
         {phase === 'throwing' && <p className="pt-6 text-center font-display text-2xl font-extrabold text-white/80">wobble… wobble…</p>}
         {phase === 'missed' && <p className="pt-6 text-center font-display text-2xl font-extrabold text-pink">It broke free!</p>}
         {phase === 'caught' && (
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7, duration: 0.3, ease: OUT }} className="text-center">
+          <motion.div initial={{ opacity: 0, y: 16, filter: 'blur(4px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} transition={{ delay: 0.7, duration: 0.3, ease: OUT }} className="text-center">
             <p className="font-display text-2xl font-extrabold">“{blip.catchLine}”</p>
             <p className="mt-1 text-sm text-white/55">{isNew ? 'Added to your Blipdex!' : `Caught ×${timesCaught}`} · <span className="font-bold text-lime">+{CATCH_XP[blip.rarity]} XP</span></p>
             <Button className="mt-4 w-full" onClick={onDone}>Nice!</Button>

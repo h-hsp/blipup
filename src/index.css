@@ -3,13 +3,16 @@
 @theme {
   --color-ink: #14122b;
   --color-ink-2: #1e1b3f;
-  --color-ink-3: #2a2656;
+  /* Dark-mode depth: shadows barely show on dark, so each step up is a lighter surface:
+     ink (page) < card < raised (dock) < sheet. ink-3 = raised controls (pills, chips). */
+  --color-ink-3: #343368;
   --color-lime: #c6ff4d;
   --color-pink: #ff6fb5;
   --color-sky: #6fd3ff;
   --color-sun: #ffc94d;
   --color-card: #221e55;
-  --color-edge: #100d2e;
+  /* see-through, so the lip under cards and pills blends into whatever is behind it */
+  --color-edge: rgb(6 4 26 / 0.6);
   --font-display: "Bricolage Grotesque", system-ui, sans-serif;
   --font-sans: "Inter", system-ui, sans-serif;
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
@@ -99,9 +102,19 @@ button { cursor: pointer; user-select: none; -webkit-user-select: none; touch-ac
   }
   .card-glow {
     background:
-      radial-gradient(120% 85% at 50% 0%, color-mix(in srgb, var(--glow) 45%, transparent), transparent 72%),
+      radial-gradient(120% 85% at 50% 0%, color-mix(in oklab, var(--glow) 45%, transparent), transparent 72%),
       linear-gradient(180deg, #2b2669 0%, #1f1b4f 100%);
   }
+  /* One step up from a card: things that float over the page (the bottom dock). */
+  .card-raised { background: linear-gradient(180deg, #38347a 0%, #2a2660 100%); }
+  /* Top layer: bottom sheets. Lightest surface; pills inside use a see-through white so they still read as raised. */
+  .sheet { background: linear-gradient(180deg, #403c83 0%, #2f2c66 100%); --color-ink-3: rgb(255 255 255 / 0.1); }
+  /* Concentric corners: a row inside a padded card = card radius minus the padding (28 - 20, or 32 - 24 in a sheet). */
+  .nest { border-radius: 8px; }
+  /* Side-scrolling rows fade out at both ends instead of being sliced off. */
+  .fade-x { -webkit-mask-image: linear-gradient(90deg, #0000, #000 20px, #000 calc(100% - 20px), #0000); mask-image: linear-gradient(90deg, #0000, #000 20px, #000 calc(100% - 20px), #0000); }
+  .fade-x { scrollbar-width: none; }
+  .fade-x::-webkit-scrollbar { display: none; }
   .label { font-size: 11px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #ffffff80; }
   /* Chunky button: it sinks into its own edge when pressed. */
   .btn {

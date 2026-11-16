@@ -18,10 +18,10 @@ export function Dex() {
         <span className="font-display text-xl font-extrabold text-lime tabular-nums">{caught.length}/{BLIPS.length}</span>
       </header>
       <div className="mt-3 h-4 overflow-hidden rounded-full bg-[#0d0b26] ring-1 ring-white/10" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}>
-        <div className="h-full rounded-full bg-gradient-to-r from-lime to-sky transition-[width] duration-500" style={{ width: `${pct}%` }} />
+        <div className="h-full rounded-full bg-linear-to-r/oklch from-lime to-sky transition-[width] duration-500" style={{ width: `${pct}%` }} />
       </div>
 
-      <div className="-mx-5 mt-4 flex gap-2 overflow-x-auto px-5 pb-1">
+      <div className="fade-x -mx-5 mt-4 flex gap-2 overflow-x-auto px-5 pb-1">
         {([0, 1, 2, 3, 4] as const).map((r) => {
           const pool = BLIPS.filter((b) => !r || b.rarity === r)
           const have = pool.filter((b) => times.has(b.id)).length
@@ -56,7 +56,7 @@ export function Dex() {
                   <li key={b.id}>
                     <button onClick={() => setOpen(b)}
                       className={`press relative flex w-full flex-col items-center rounded-3xl px-1 pb-3 pt-2 ${n ? 'card card-glow' : 'border-2 border-dashed border-white/12 bg-white/3'}`}
-                      style={n ? { ['--glow' as string]: b.color, ['--edge' as string]: `color-mix(in srgb, ${RARITY[b.rarity].color} 40%, #100d2e)` } : undefined}>
+                      style={n ? { ['--glow' as string]: b.color, ['--edge' as string]: `color-mix(in oklab, ${RARITY[b.rarity].color} 40%, #100d2e)` } : undefined}>
                       {n && n > 1 && <span className="absolute right-2 top-2 z-10 rounded-lg bg-ink px-1.5 text-[10px] font-extrabold">×{n}</span>}
                       <BlipArt blip={b} size={92} locked={!n} idle={false} burst={false} />
                       <span className="mt-1 max-w-full truncate px-1 text-sm font-bold">{n ? b.name : '???'}</span>

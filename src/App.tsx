@@ -57,7 +57,7 @@ function Shell() {
       {tab === 'settings' && <Settings onBack={() => setView({ name: 'me' })} onEncounter={(enc) => setView({ name: 'encounter', enc, rewards: [] })} />}
 
       <nav className="fixed inset-x-0 bottom-0 z-30 mx-auto max-w-md px-5 pb-[max(1rem,env(safe-area-inset-bottom))]">
-        <div className="card flex rounded-[26px] p-1.5 [--edge:#0a0820]">
+        <div className="card card-raised flex rounded-[26px] p-1.5 [--edge:#0a0820]">
           {([['home', 'Home', HomeIcon], ['campaign', 'Campaign', FlagIcon], ['dex', 'Blipdex', DexIcon], ['perks', 'Perks', PerksIcon], ['social', 'Social', SocialIcon], ['me', 'Me', MeIcon]] as const).map(([id, label, Icon]) => {
             const active = tab === id || (id === 'me' && tab === 'settings')
             return (
@@ -95,7 +95,8 @@ function TopBar({ bubbles }: { bubbles: boolean }) {
   </>)
 }
 
-const svg = { width: 22, height: 22, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const, 'aria-hidden': true }
+const svg = { width: 22, height: 22, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2.25, // matches the stem weight of the extrabold labels under the icons
+  strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const, 'aria-hidden': true }
 const HomeIcon = () => <svg {...svg}><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" /></svg>
 const FlagIcon = () => <svg {...svg}><path d="M5 21V4" /><path d="M5 4h13l-3 4.5 3 4.5H5" /></svg>
 const DexIcon = () => <svg {...svg}><rect x="3" y="3" width="7" height="7" rx="2" /><rect x="14" y="3" width="7" height="7" rx="2" /><rect x="3" y="14" width="7" height="7" rx="2" /><rect x="14" y="14" width="7" height="7" rx="2" /></svg>

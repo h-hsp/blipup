@@ -201,7 +201,7 @@ export function Session({ level, onExit, onEncounter }: { level?: Level; onExit:
       {err && <p className="mt-3 text-center text-sm text-pink">{err}</p>}
       <AnimatePresence>
         {done && (
-          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}>
+          <motion.div initial={{ opacity: 0, y: 16, filter: 'blur(4px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}>
             <Button variant="pink" className="mt-5 w-full" disabled={busy} onClick={finish}>{busy ? 'Sending blip…' : 'Find a Blip ✨'}</Button>
           </motion.div>
         )}

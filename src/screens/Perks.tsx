@@ -131,7 +131,7 @@ export function Perks() {
       <section>
         <h2 className="font-display text-xl font-extrabold">Your Blips</h2>
         <p className="mt-1 text-sm text-white/55">Every Blip has an ability. Rarer Blips are stronger.</p>
-        <div className="-mx-5 mt-3 flex gap-2 overflow-x-auto px-5 pb-1">
+        <div className="fade-x -mx-5 mt-3 flex gap-2 overflow-x-auto px-5 pb-1">
           {[null, ...KINDS].map((k) => (
             <button key={k ?? 'all'} onClick={() => setFilter(k)} aria-pressed={filter === k}
               className={`press mb-1 shrink-0 rounded-xl px-3 py-2 text-sm font-extrabold ${filter === k ? 'bg-white text-ink shadow-[0_3px_0_#9a98b8]' : 'bg-ink-3 shadow-[0_3px_0_var(--color-edge)]'}`}>
@@ -150,7 +150,7 @@ export function Perks() {
                 <li key={b.id}>
                   <button onClick={() => toggle('blips', b.id, MAX_BLIPS)} aria-pressed={on} aria-label={`${b.name}: ${ABILITIES[a.kind].text(a.n)}${on ? ', equipped' : ''}`}
                     className={`press relative flex w-full flex-col items-center rounded-3xl px-1 pb-2.5 pt-2 ${on ? 'card card-glow [--glow:#c6ff4d]' : 'card'}`}
-                    style={on ? undefined : { ['--edge' as string]: `color-mix(in srgb, ${RARITY[b.rarity].color} 40%, #100d2e)` }}>
+                    style={on ? undefined : { ['--edge' as string]: `color-mix(in oklab, ${RARITY[b.rarity].color} 40%, #100d2e)` }}>
                     {on && <span className="absolute right-2 top-2 z-10 rounded-lg bg-lime px-1.5 text-[10px] font-extrabold text-ink">ON</span>}
                     <BlipArt blip={b} size={80} idle={false} burst={false} />
                     <span className="mt-1 max-w-full truncate px-1 text-sm font-bold">{b.name}</span>
@@ -186,7 +186,7 @@ export function Perks() {
               </div>
               <div className="mt-2 h-3 overflow-hidden rounded-full bg-[#0d0b26] ring-1 ring-white/10" role="progressbar" aria-label={`${p.need} collection caught`}
                 aria-valuenow={pl.have} aria-valuemin={0} aria-valuemax={pl.total}>
-                <div className="h-full rounded-full bg-gradient-to-r from-lime to-sky" style={{ width: `${(pl.have / pl.total) * 100}%` }} />
+                <div className="h-full rounded-full bg-linear-to-r/oklch from-lime to-sky" style={{ width: `${(pl.have / pl.total) * 100}%` }} />
               </div>
 
               <ol className="mt-5 space-y-2" aria-label="All levels">
@@ -197,7 +197,7 @@ export function Perks() {
                   const current = pl.level === lv
                   return (
                     <li key={lv} aria-current={current ? 'step' : undefined}
-                      className={`flex items-center gap-3 rounded-2xl px-3.5 py-2.5 ${current ? 'bg-lime/15 ring-2 ring-lime' : reached ? 'bg-ink-3' : 'border-2 border-dashed border-white/10'}`}>
+                      className={`flex items-center gap-3 nest px-3.5 py-2.5 ${current ? 'bg-lime/15 ring-2 ring-lime' : reached ? 'bg-ink-3' : 'border-2 border-dashed border-white/10'}`}>
                       <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-xl font-display text-sm font-extrabold ${reached ? 'bg-lime text-ink shadow-[0_2px_0_#7fb01a]' : 'bg-white/8 text-white/45'}`}>Lv{lv}</span>
                       <span className="min-w-0 flex-1">
                         <span className={`block font-extrabold ${reached ? '' : 'text-white/60'}`}>{ABILITIES[p.kind].text((p.n * lv) / PERK_LEVELS)}</span>

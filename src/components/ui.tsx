@@ -50,7 +50,7 @@ export function Sheet({ open, onClose, children }: { open: boolean; onClose: () 
         <motion.div className="fixed inset-0 z-40 flex items-end justify-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: 0.15 } }}
           onKeyDown={(e) => e.key === 'Escape' && onClose()}>
           <button aria-label="Close" className="absolute inset-0 cursor-default bg-black/60 backdrop-blur-sm" onClick={onClose} />
-          <motion.div role="dialog" aria-modal className="relative max-h-[90dvh] w-full max-w-md overflow-y-auto rounded-t-[32px] bg-gradient-to-b from-[#2b2669] to-ink-2 p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] shadow-[inset_0_1.5px_0_#ffffff33]"
+          <motion.div role="dialog" aria-modal className="relative max-h-[90dvh] w-full max-w-md sheet overflow-y-auto rounded-t-[32px] p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] shadow-[inset_0_1.5px_0_#ffffff33]"
             initial={{ y: '100%' }} animate={{ y: 0, transition: { duration: 0.45, ease: [0.32, 0.72, 0, 1] } }} exit={{ y: '100%', transition: { duration: 0.2, ease: [0.23, 1, 0.32, 1] } }}>
             <div className="mx-auto mb-4 h-1.5 w-10 rounded-full bg-white/20" />
             {children}

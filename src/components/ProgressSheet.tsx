@@ -36,7 +36,7 @@ function Step({ icon, name, need, done, current, tag = 'you', toGo, color }: {
   icon: ReactNode; name: string; need: string; done: boolean; current?: boolean; tag?: string; toGo?: string; color?: string
 }) {
   return (
-    <li className={`flex items-center gap-3 rounded-2xl px-3 py-2.5 ${current ? 'bg-lime/15 ring-1 ring-lime/50' : 'bg-white/5'} ${!done ? 'opacity-70' : ''}`}
+    <li className={`flex items-center gap-3 nest px-3 py-2.5 ${current ? 'bg-lime/15 ring-1 ring-lime/50' : 'bg-white/5'} ${!done ? 'opacity-70' : ''}`}
       aria-current={current ? 'step' : undefined}>
       <span className="grid w-8 place-items-center text-xl" aria-hidden>{icon}</span>
       <span className="min-w-0 flex-1">
@@ -79,7 +79,7 @@ function Levels() {
           ['🔥', `${STREAK_DAY_XP} per day of your best streak`],
           ['🫧', `Catches: ${CATCH_XP[1]} / ${CATCH_XP[2]} / ${CATCH_XP[3]} / ${CATCH_XP[4]} by ★`],
           ['⚡', 'Bonus XP from perks and Blips in your loadout'],
-        ].map(([icon, text]) => <li key={text} className="flex gap-2 rounded-2xl bg-white/5 px-3 py-2"><span aria-hidden>{icon}</span>{text}</li>)}
+        ].map(([icon, text]) => <li key={text} className="flex gap-2 nest bg-white/5 px-3 py-2"><span aria-hidden>{icon}</span>{text}</li>)}
       </ul>
       <h3 className="label">Every level</h3>
       <ol className="mt-2 space-y-1.5">
@@ -133,7 +133,7 @@ function Bubbles() {
       <h3 className="label">How to get more</h3>
       <ul className="mb-4 mt-2 space-y-1.5">
         {ways.map(([icon, name, need]) => (
-          <li key={name} className="flex items-center gap-3 rounded-2xl bg-white/5 px-3 py-2.5">
+          <li key={name} className="flex items-center gap-3 nest bg-white/5 px-3 py-2.5">
             <span className="grid w-8 place-items-center text-xl" aria-hidden>{icon}</span>
             <span><span className="block font-display font-extrabold">{name}</span><span className="block text-xs text-white/55">{need}</span></span>
           </li>
