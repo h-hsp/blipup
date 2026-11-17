@@ -150,6 +150,6 @@ export const SETS = ([
 export const RARITY = {
   1: { label: 'Common', color: '#7CF5C4' },
   2: { label: 'Uncommon', color: '#6FD3FF' },
-  3: { label: 'Epic', color: '#B98CFF' },
+  3: { label: 'Epic', color: '#C5A3FF' },
   4: { label: 'Legendary', color: '#FFD34D' },
 } as const

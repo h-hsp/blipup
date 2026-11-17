@@ -7,7 +7,7 @@
      ink (page) < card < raised (dock) < sheet. ink-3 = raised controls (pills, chips). */
   --color-ink-3: #343368;
   --color-lime: #c6ff4d;
-  --color-pink: #ff6fb5;
+  --color-pink: #ff8dc1;
   --color-sky: #6fd3ff;
   --color-sun: #ffc94d;
   --color-card: #221e55;
@@ -43,7 +43,7 @@ body { min-height: 100dvh; background: transparent; }
     radial-gradient(1px 1px at 35% 80%, #ffffff80 50%, transparent 51%),
     radial-gradient(1px 1px at 55% 50%, #ffffff60 50%, transparent 51%),
     radial-gradient(55% 35% at 12% 18%, #7b3fe455 0%, transparent 70%),
-    radial-gradient(45% 30% at 90% 40%, #ff6fb530 0%, transparent 70%),
+    radial-gradient(45% 30% at 90% 40%, #ff8dc130 0%, transparent 70%),
     radial-gradient(70% 40% at 40% 100%, #2bb7d42e 0%, transparent 70%),
     linear-gradient(180deg, #0b0a1f 0%, #14122b 45%, #1c1145 100%);
   background-size: 220px 220px, 260px 260px, 300px 300px, 240px 240px, 180px 180px, 100% 100%, 100% 100%, 100% 100%, 100% 100%;

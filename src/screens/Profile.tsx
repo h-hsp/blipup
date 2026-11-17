@@ -147,7 +147,7 @@ function SaveProgress() {
   }
   const field = 'field w-full px-4 py-3 text-base'
   return (
-    <form onSubmit={save} className="card card-glow space-y-2 p-5 [--edge:#7a2a55] [--glow:#ff6fb5]">
+    <form onSubmit={save} className="card card-glow space-y-2 p-5 [--edge:#7a2a55] [--glow:#ff8dc1]">
       <div className="font-display text-lg font-extrabold">Save your progress</div>
       <p className="text-sm text-white/65">You're playing as a guest. Pick a username and password so you never lose your Blips.</p>
       {withEmail ? (

@@ -133,7 +133,7 @@ export function Encounter({ initial, rewards, onDone }: { initial: Enc; rewards:
         {(phase === 'throwing' || phase === 'caught' || phase === 'missed') && (
           <motion.div key={`bubble-${throws}`} aria-hidden
             className="absolute h-36 w-36 rounded-full"
-            style={{ background: 'radial-gradient(circle at 30% 28% in oklch, #ffffffcc 0 8%, #ffffff22 22%, #6fd3ff33 60%, #ff6fb555 100%)', boxShadow: 'inset 0 0 0 3px #ffffffaa, 0 0 40px #6fd3ff66' }}
+            style={{ background: 'radial-gradient(circle at 30% 28% in oklch, #ffffffcc 0 8%, #ffffff22 22%, #6fd3ff33 60%, #ff8dc155 100%)', boxShadow: 'inset 0 0 0 3px #ffffffaa, 0 0 40px #6fd3ff66' }}
             initial={{ y: 320, scale: 0.4, opacity: 0, rotate: 0 }}
             animate={
               phase === 'throwing'
@@ -242,7 +242,7 @@ function Confetti() {
     x: `${Math.cos((i / 28) * Math.PI * 2) * (120 + Math.random() * 80)}px`,
     y: `${Math.sin((i / 28) * Math.PI * 2) * (120 + Math.random() * 80) - 40}px`,
     r: `${Math.random() * 720 - 360}deg`,
-    c: ['#c6ff4d', '#ff6fb5', '#6fd3ff', '#ffc94d'][i % 4],
+    c: ['#c6ff4d', '#ff8dc1', '#6fd3ff', '#ffc94d'][i % 4],
     d: Math.random() * 0.2,
   })), [])
   return (

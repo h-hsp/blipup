@@ -29,14 +29,14 @@ export function levelInfo(xp: number) {
 /** Ranks come from lifetime pushups only (levels mix in catches and streaks). `min` = total pushups needed. */
 export const RANKS = [
   { name: 'Rookie', min: 0, icon: '🐣', color: '#c9c6e8' },
-  { name: 'Bronze', min: 50, icon: '🥉', color: '#d08a4f' },
+  { name: 'Bronze', min: 50, icon: '🥉', color: '#eda56a' },
   { name: 'Silver', min: 150, icon: '🥈', color: '#c9d3e6' },
   { name: 'Gold', min: 350, icon: '🥇', color: '#ffc94d' },
   { name: 'Platinum', min: 700, icon: '💠', color: '#6fd3ff' },
   { name: 'Diamond', min: 1200, icon: '💎', color: '#8fe9ff' },
-  { name: 'Master', min: 2000, icon: '🔮', color: '#b48cff' },
-  { name: 'Grandmaster', min: 3500, icon: '👑', color: '#ff8a4d' },
-  { name: 'Legend', min: 5000, icon: '🌟', color: '#ff6fb5' },
+  { name: 'Master', min: 2000, icon: '🔮', color: '#c2a5fe' },
+  { name: 'Grandmaster', min: 3500, icon: '👑', color: '#fe9a68' },
+  { name: 'Legend', min: 5000, icon: '🌟', color: '#ff8dc1' },
   { name: 'Mythic', min: 10000, icon: '🌌', color: '#c6ff4d' },
 ]
 
