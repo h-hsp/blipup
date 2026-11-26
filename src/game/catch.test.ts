@@ -28,15 +28,15 @@ test('legendaries locked below 30 reps, odds always sum to 100', () => {
   }
 })
 
-test('roster is 24/24/20/14 (82) with unique ids', () => {
+test('roster is 30/30/25/17 (102) with unique ids', () => {
   const count = (r: number) => BLIPS.filter((b) => b.rarity === r).length
-  assert.deepEqual([count(1), count(2), count(3), count(4)], [24, 24, 20, 14])
+  assert.deepEqual([count(1), count(2), count(3), count(4)], [30, 30, 25, 17])
   assert.equal(new Set(BLIPS.map((b) => b.id)).size, BLIPS.length)
-  assert.equal(BLIPS.length, 82)
+  assert.equal(BLIPS.length, 102)
 })
 
 test('Blipdex sets hold every Blip once, sorted by rarity', () => {
-  assert.deepEqual(SETS.map((s) => [s.name, s.blips.length]), [['Originals', 6], ['Brainrot', 27], ['Explorer wave', 37], ['Pop culture', 12]])
+  assert.deepEqual(SETS.map((s) => [s.name, s.blips.length]), [['Originals', 6], ['Brainrot', 47], ['Explorer wave', 37], ['Pop culture', 12]])
   const ids = SETS.flatMap((s) => s.blips.map((b) => b.id))
   assert.deepEqual([...ids].sort(), BLIPS.map((b) => b.id).sort())
   for (const s of SETS) s.blips.forEach((b, i) => i && assert.ok(b.rarity >= s.blips[i - 1].rarity, s.name))

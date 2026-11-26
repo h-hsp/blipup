@@ -4,7 +4,8 @@ import { readFileSync } from 'node:fs'
 import { BLIPS, SETS } from './blips.ts'
 import { ABILITIES, abilityOf, levelNeed, loadoutTotals, PERK_LEVELS, perkLevel, PERKS } from './perks.ts'
 
-const sql = readFileSync(new URL('../../supabase/migrations/007_loadout.sql', import.meta.url), 'utf8')
+// later migrations override earlier rows (012 re-spreads the Brainrot abilities)
+const sql = ['007_loadout.sql', '012_brainrot_wave2.sql'].map((f) => readFileSync(new URL(`../../supabase/migrations/${f}`, import.meta.url), 'utf8')).join('\n')
 
 test('server ability list matches the app (007_loadout.sql)', () => {
   const rows = new Map([...sql.matchAll(/\('([a-z0-9]+)', '([^']+)', '(xp|catch|saver|finder)'\)/g)].map((m) => [m[1], [m[2], m[3]]]))
@@ -37,10 +38,10 @@ test('perks level up with the collection and only reach their full boost when it
 })
 
 test('loadout totals add levelled perks and Blip abilities', () => {
-  const goat = BLIPS.find((b) => b.id === 'goat')! // 4-star Bubble Finder
-  assert.deepEqual(abilityOf(goat), { kind: 'finder', n: 20 })
+  const chonk = BLIPS.find((b) => b.id === 'chonk')! // 4-star Bubble Finder (Explorer wave, so new Brainrot Blips don't move it)
+  assert.deepEqual(abilityOf(chonk), { kind: 'finder', n: 20 })
   const all = new Set(BLIPS.map((b) => b.id))
-  assert.deepEqual(loadoutTotals(['headstart', 'packrat'], ['goat', 'blub'], all), { xp: 10 + 5, catch: 0, saver: 20, finder: 20 })
+  assert.deepEqual(loadoutTotals(['headstart', 'packrat'], ['chonk', 'blub'], all), { xp: 10 + 5, catch: 0, saver: 20, finder: 20 })
   assert.deepEqual(loadoutTotals(['headstart', 'packrat'], [], new Set()), { xp: 0, catch: 0, saver: 0, finder: 0 })
   assert.deepEqual(loadoutTotals(['nope'], ['nope'], all), { xp: 0, catch: 0, saver: 0, finder: 0 })
 })
